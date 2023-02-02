@@ -14,6 +14,12 @@ function get_property(name) {
   return PropertiesService.getScriptProperties().getProperty(name);
 }
 
+function debug_mode() {
+  const mode = PropertiesService.getScriptProperties().getProperty('DEBUG_MODE');
+
+  return mode == 1;
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
@@ -70,6 +76,13 @@ function send_to_slack(message) {
     "headers": headers,
     "payload": JSON.stringify(payload)
     // "muteHttpExceptions": true
+  }
+
+  if (debug_mode()) {
+    console.log({
+      url: url,
+      from: message.getFrom()
+    });
   }
   UrlFetchApp.fetch(url, options)
   message.markRead()
