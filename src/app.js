@@ -1,7 +1,6 @@
 function main() {
   const threads = GmailApp.search('in:Inbox is:Unread', 0, 100)
 
-  
   threads.forEach((thread) => {
     thread.getMessages().forEach((message) => {
       if (!message.isUnread()) { return }
@@ -23,7 +22,7 @@ function webhook_url(message) {
   }
 
   if (from.includes('connpass')) {
-    return get_property('SLACK_RAKUTEN_CHANNEL');
+    return get_property('SLACK_CONNPASS_CHANNEL');
   }
 
   if (from.includes('amazon')) {
