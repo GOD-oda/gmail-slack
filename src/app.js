@@ -53,10 +53,9 @@ function webhook_url(message) {
 
 function create_payload(message) {
   return {
-    username: message.getFrom(),
+    username: message.getSubject(),
     attachments: [{
       color: "36a64f",
-      pretext:message.getDate(),
       fields: [
         {
           value: message.getPlainBody()
