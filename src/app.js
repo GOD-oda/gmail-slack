@@ -1,5 +1,5 @@
 function main() {
-  const threads = GmailApp.search('in:Inbox is:Unread', 0, 100)
+  const threads = GmailApp.search('in:Inbox is:Unread', 0, 10)
 
   threads.forEach((thread) => {
     thread.getMessages().forEach((message) => {
