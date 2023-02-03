@@ -10,6 +10,7 @@ function main() {
   })
 }
 
+// GASのプロパティ取得
 function get_property(name) {
   return PropertiesService.getScriptProperties().getProperty(name);
 }
@@ -53,9 +54,10 @@ function webhook_url(message) {
 
 function create_payload(message) {
   return {
-    username: message.getSubject(),
+    username: message.getFrom(),
     attachments: [{
       color: "36a64f",
+      pretext: Utilities.formatString('Subject: *%s*', message.getSubject()),
       fields: [
         {
           value: message.getPlainBody()
