@@ -48,6 +48,10 @@ function webhook_url(message) {
     return get_property('SLACK_GOOGLECALENDAR_CHANNLE');
   }
 
+  if (from.includes('trip.com')) {
+    return get_property('SLACK_TRIP_CHANNEL');
+  }
+
   return '';
 }
 
