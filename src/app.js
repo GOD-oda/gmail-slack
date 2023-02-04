@@ -21,40 +21,107 @@ function debug_mode() {
   return mode == 1;
 }
 
+class Rule {
+  match(from) {
+    throw new Error('You should implement match()');
+  }
+
+  url() {
+    throw new Error('You should implement url()');
+  }
+}
+
+class RakutenRule extends Rule {
+  match(from) {
+    return from.includes('rakuten')
+  }
+
+  url() {
+    return get_property('SLACK_RAKUTEN_CHANNEL');
+  }
+}
+
+class ConnpassRule extends Rule {
+  match(from) {
+    return from.includes('connpass')
+  }
+
+  url() {
+    return get_property('SLACK_CONNPASS_CHANNEL');
+  }
+}
+
+class AmazonRule extends Rule{
+  match(from) {
+    return from.includes('amazon');
+  }
+
+  url() {
+    return get_property('SLACK_AMAZON_CHANNEL');
+  }
+}
+
+class AmericanexpressRule extends Rule {
+  match(from) {
+    return from.includes('americanexpress');
+  }
+
+  url() {
+    return get_property('SLACK_AMERICANEXPRESS_CHANNEL');
+  }
+}
+
+class VpassRule extends Rule {
+  match(from) {
+    return from.includes('vpass');
+  }
+
+  url() {
+    return get_property('SLACK_VPASS_CHANNEL');
+  }
+}
+
+class GoogleCalendarRule extends Rule {
+  match(from) {
+    return from.includes('calendar-notification@google.com');
+  }
+
+  url() {
+    return get_property('SLACK_GOOGLECALENDAR_CHANNLE');
+  }
+}
+
+class TripcomRule extends Rule {
+  match(from) {
+    return from.includes('trip.com');
+  }
+
+  url() {
+    return get_property('SLACK_TRIP_CHANNEL');
+  }
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
-  if (from.includes('rakuten')) {
-    return get_property('SLACK_RAKUTEN_CHANNEL');
-  }
+  const rules = [
+    new RakutenRule(),
+    new AmericanexpressRule(),
+    new AmazonRule(),
+    new ConnpassRule(),
+    new GoogleCalendarRule(),
+    new VpassRule(),
+    new TripcomRule(),
+  ];
 
-  if (from.includes('connpass')) {
-    return get_property('SLACK_CONNPASS_CHANNEL');
-  }
-
-  if (from.includes('amazon')) {
-    return get_property('SLACK_AMAZON_CHANNEL');
-  }
-
-  if (from.includes('americanexpress')) {
-    return get_property('SLACK_AMERICANEXPRESS_CHANNEL');
-  }
-
-  if (from.includes('vpass')) {
-    return get_property('SLACK_VPASS_CHANNEL');
-  }
-
-  if (from.includes('calendar-notification@google.com')) {
-    return get_property('SLACK_GOOGLECALENDAR_CHANNLE');
-  }
-
-  if (from.includes('trip.com')) {
-    return get_property('SLACK_TRIP_CHANNEL');
-  }
+  rules.find((element) => {
+    if (element.match(from)) {
+      return element.url()
+    }
+  });
 
   return '';
 }
-
 
 function create_payload(message) {
   return {
