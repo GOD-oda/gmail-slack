@@ -114,11 +114,11 @@ function webhook_url(message) {
     new TripcomRule(),
   ];
 
-  rules.find((element) => {
+  for (const element of rules) {
     if (element.match(from)) {
       return element.url()
     }
-  });
+  }
 
   return '';
 }
@@ -140,6 +140,12 @@ function create_payload(message) {
 
 function send_to_slack(message) {
   const url = webhook_url(message)
+  if (debug_mode()) {
+    console.log({
+      webhook_url: url
+    });
+  }
+
   if (url == '') { return }
   const headers = { "Content-type": "application/json" }
   const payload = create_payload(message)
@@ -152,7 +158,6 @@ function send_to_slack(message) {
 
   if (debug_mode()) {
     console.log({
-      url: url,
       from: message.getFrom()
     });
   }
