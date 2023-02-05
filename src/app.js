@@ -101,6 +101,17 @@ class TripcomRule extends Rule {
   }
 }
 
+class FinanceRule extends Rule {
+  match(from) {
+    return from.includes('mufg');
+  }
+
+  url() {
+    return get_property('SLACK_FINANCE_CHANNEL');
+  }
+
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
@@ -112,6 +123,7 @@ function webhook_url(message) {
     new GoogleCalendarRule(),
     new VpassRule(),
     new TripcomRule(),
+    new FinanceRule(),
   ];
 
   for (const element of rules) {
