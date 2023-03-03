@@ -88,6 +88,16 @@ class FinanceRule extends Rule {
   }
 }
 
+class YoutrustRule extends Rule {
+  match(from) {
+    return from.includes('youtrust');
+  }
+
+  url() {
+    return get_property('SLACK_HR_CHANNEL');
+  }
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
@@ -100,6 +110,7 @@ function webhook_url(message) {
     new VpassRule(),
     new TripcomRule(),
     new FinanceRule(),
+    new YoutrustRule(),
   ];
 
   for (const element of rules) {
