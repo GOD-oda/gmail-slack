@@ -78,6 +78,16 @@ class TripcomRule extends Rule {
   }
 }
 
+class JtbRule extends Rule {
+  match(from) {
+    return from.includes('jtb');
+  }
+
+  url() {
+    return get_property('SLACK_TRIP_CHANNEL');
+  }
+}
+
 class FinanceRule extends Rule {
   match(from) {
     return from.includes('mufg');
