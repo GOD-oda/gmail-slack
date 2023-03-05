@@ -141,6 +141,8 @@ function webhook_url(message) {
     new TripcomRule(),
     new FinanceRule(),
     new YoutrustRule(),
+    new OffersRule(),
+    new IssueRule(),
   ];
 
   for (const element of rules) {
