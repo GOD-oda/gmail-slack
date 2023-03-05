@@ -118,6 +118,16 @@ class OffersRule extends Rule {
   }
 }
 
+class IssueRule extends Rule {
+  match(from) {
+    return from.includes('i-ssue.com');
+  }
+
+  url() {
+    return get_property('SLACK_HR_CHANNEL');
+  }
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
