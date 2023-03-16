@@ -128,6 +128,16 @@ class IssueRule extends Rule {
   }
 }
 
+class WantedlyRule extends Rule {
+  match(from) {
+    return from.includes('wantedly.com');
+  }
+
+  url() {
+    return get_property('SLACK_HR_CHANNEL');
+  }
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
@@ -143,6 +153,7 @@ function webhook_url(message) {
     new YoutrustRule(),
     new OffersRule(),
     new IssueRule(),
+    new WantedlyRule(),
   ];
 
   for (const element of rules) {
