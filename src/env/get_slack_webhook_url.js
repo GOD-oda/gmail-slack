@@ -138,6 +138,16 @@ class WantedlyRule extends Rule {
   }
 }
 
+class AgodaRule extends Rule {
+  match(from) {
+    return from.includes('agoda.com');
+  }
+
+  url() {
+    return get_property('SLACK_TRIP_CHANNEL');
+  }
+}
+
 function webhook_url(message) {
   const from = message.getFrom();
 
@@ -154,6 +164,7 @@ function webhook_url(message) {
     new OffersRule(),
     new IssueRule(),
     new WantedlyRule(),
+    new AgodaRule(),
   ];
 
   for (const element of rules) {
