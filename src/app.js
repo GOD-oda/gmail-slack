@@ -21,7 +21,7 @@ function debug_mode() {
   return mode == 1;
 }
 
-function create_payload(message) {
+function create_payload(message, config) {
   return {
     username: message.getFrom(),
     attachments: [{
@@ -32,21 +32,20 @@ function create_payload(message) {
           value: message.getPlainBody()
         }
       ]
-    }]
+    }],
+    icon_emoji: config['icon_emoji']
   };
 }
 
 function send_to_slack(message) {
-  const url = webhook_url(message)
+  const config = get_config(message)
   if (debug_mode()) {
-    console.log({
-      webhook_url: url
-    });
+    console.log(config);
   }
 
-  if (url == '') { return }
+  if (config['webhook_url'] == undefined) { return }
   const headers = { "Content-type": "application/json" }
-  const payload = create_payload(message)
+  const payload = create_payload(message, config)
   const options = {
     "method": "post",
     "headers": headers,
@@ -59,7 +58,7 @@ function send_to_slack(message) {
       from: message.getFrom()
     });
   }
-  UrlFetchApp.fetch(url, options)
+  UrlFetchApp.fetch(config['webhook_url'], options)
   message.markRead()
 }
 

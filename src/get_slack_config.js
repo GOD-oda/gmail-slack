@@ -3,8 +3,8 @@ class Rule {
     throw new Error('You should implement match()');
   }
 
-  url() {
-    throw new Error('You should implement url()');
+  config() {
+    throw new Error('You should implement config()');
   }
 }
 
@@ -13,8 +13,11 @@ class RakutenRule extends Rule {
     return from.includes('rakuten')
   }
 
-  url() {
-    return get_property('SLACK_RAKUTEN_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_RAKUTEN_CHANNEL'),
+      icon_emoji: ":rakuten:"
+    }
   }
 }
 
@@ -23,8 +26,11 @@ class ConnpassRule extends Rule {
     return from.includes('connpass')
   }
 
-  url() {
-    return get_property('SLACK_CONNPASS_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_CONNPASS_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -33,8 +39,11 @@ class AmazonRule extends Rule{
     return from.includes('amazon');
   }
 
-  url() {
-    return get_property('SLACK_AMAZON_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_AMAZON_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -43,8 +52,11 @@ class AmericanexpressRule extends Rule {
     return from.includes('americanexpress');
   }
 
-  url() {
-    return get_property('SLACK_AMERICANEXPRESS_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_AMERICANEXPRESS_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -53,8 +65,11 @@ class VpassRule extends Rule {
     return from.includes('vpass');
   }
 
-  url() {
-    return get_property('SLACK_VPASS_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_VPASS_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -63,8 +78,11 @@ class GoogleRule extends Rule {
     return from.includes('google.com');
   }
 
-  url() {
-    return get_property('SLACK_GOOGLE_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_GOOGLE_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -73,8 +91,11 @@ class TripcomRule extends Rule {
     return from.includes('trip.com');
   }
 
-  url() {
-    return get_property('SLACK_TRIP_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -83,8 +104,11 @@ class JtbRule extends Rule {
     return from.includes('jtb');
   }
 
-  url() {
-    return get_property('SLACK_TRIP_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -93,8 +117,11 @@ class FinanceRule extends Rule {
     return from.includes('mufg');
   }
 
-  url() {
-    return get_property('SLACK_FINANCE_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -103,8 +130,11 @@ class YoutrustRule extends Rule {
     return from.includes('youtrust');
   }
 
-  url() {
-    return get_property('SLACK_HR_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_HR_CHANNEL'),
+      icon_emoji: ""
+    }
   }
 }
 
@@ -113,8 +143,11 @@ class OffersRule extends Rule {
     return from.includes('offers.jp');
   }
 
-  url() {
-    return get_property('SLACK_HR_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_HR_CHANNEL'),
+      icon_emoji: ":offers_logo:"
+    }
   }
 }
 
@@ -123,8 +156,11 @@ class IssueRule extends Rule {
     return from.includes('i-ssue.com');
   }
 
-  url() {
-    return get_property('SLACK_HR_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_HR_CHANNEL'),
+      icon_emoji: ":issue_logo:"
+    }
   }
 }
 
@@ -133,8 +169,11 @@ class WantedlyRule extends Rule {
     return from.includes('wantedly.com');
   }
 
-  url() {
-    return get_property('SLACK_HR_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_HR_CHANNEL'),
+      icon_emoji: ":wantedly_mark_lightbg:"
+    }
   }
 }
 
@@ -143,12 +182,15 @@ class AgodaRule extends Rule {
     return from.includes('agoda.com');
   }
 
-  url() {
-    return get_property('SLACK_TRIP_CHANNEL');
+  config() {
+    return {
+      webhook_url: get_property('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ":agoda:"
+    };
   }
 }
 
-function webhook_url(message) {
+function get_config(message) {
   const from = message.getFrom();
 
   const rules = [
@@ -169,9 +211,9 @@ function webhook_url(message) {
 
   for (const element of rules) {
     if (element.match(from)) {
-      return element.url()
+      return element.config();
     }
   }
 
-  return '';
+  return {};
 }
