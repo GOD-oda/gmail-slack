@@ -190,6 +190,20 @@ class AgodaRule extends Rule {
   }
 }
 
+class GasRule extends Rule {
+  match(from) {
+    return from.includes('\n' +
+      'apps-scripts-notifications@google.com');
+  }
+
+  config() {
+    return {
+      webhook_url: get_property('SLACK_GAS_CHANNEL'),
+      icon_emoji: ":google_script_apps_logo_icon:"
+    };
+  }
+}
+
 function get_config(message) {
   const from = message.getFrom();
 
@@ -207,6 +221,8 @@ function get_config(message) {
     new IssueRule(),
     new WantedlyRule(),
     new AgodaRule(),
+    new JtbRule(),
+    new GasRule(),
   ];
 
   for (const element of rules) {
