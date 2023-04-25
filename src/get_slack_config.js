@@ -1,6 +1,10 @@
+function splitEmail(from) {
+  return from.split('@');
+}
 class Rule {
   match(from) {
-    throw new Error('You should implement match()');
+    const [_address, domain_str] = splitEmail(from);
+    return domain_str.includes(this.domain);
   }
 
   config() {
@@ -9,8 +13,9 @@ class Rule {
 }
 
 class RakutenRule extends Rule {
-  match(from) {
-    return from.includes('rakuten')
+  constructor() {
+    super();
+    this.domain = 'rakuten';
   }
 
   config() {
@@ -22,125 +27,141 @@ class RakutenRule extends Rule {
 }
 
 class ConnpassRule extends Rule {
-  match(from) {
-    return from.includes('connpass')
+  constructor() {
+    super();
+    this.domain = 'connpass';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_CONNPASS_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: "connpass_logo_icon"
     }
   }
 }
 
 class AmazonRule extends Rule{
-  match(from) {
-    return from.includes('amazon');
+  constructor() {
+    super();
+    this.domain = 'amazon';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_AMAZON_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: "amazon_logo_icon"
     }
   }
 }
 
 class AmericanexpressRule extends Rule {
-  match(from) {
-    return from.includes('americanexpress');
+  constructor() {
+    super();
+    this.domain = 'americanexpress';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_AMERICANEXPRESS_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: "amex_logo_icon"
     }
   }
 }
 
 class VpassRule extends Rule {
-  match(from) {
-    return from.includes('vpass');
+  constructor() {
+    super();
+    this.domain = 'vpass.ne.jp';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_VPASS_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: "vpass_logo_icon"
     }
   }
 }
 
 class GoogleRule extends Rule {
-  match(from) {
-    return from.includes('google.com');
+  constructor() {
+    super();
+    this.domain = 'google.com';
+    this.lists = [
+      { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', webhook_url: get_property('SLACK_GOOGLE_CHANNEL') },
+      { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', webhook_url: get_property('SLACK_GOOGLE_CHANNEL') },
+    ];
   }
 
-  config() {
-    return {
-      webhook_url: get_property('SLACK_GOOGLE_CHANNEL'),
-      icon_emoji: ""
+  config(from) {
+    const [address, _domain] = splitEmail(from);
+    for (const list of this.lists) {
+      if (list['address'].match(address)) {
+        return list;
+      }
     }
   }
 }
 
 class TripcomRule extends Rule {
-  match(from) {
-    return from.includes('trip.com');
+  constructor() {
+    super();
+    this.domain = 'trip.com';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: ":trip_com_logo_icon:"
     }
   }
 }
 
 class JtbRule extends Rule {
-  match(from) {
-    return from.includes('jtb');
+  constructor() {
+    super();
+    this.domain = 'jtb.co.jp';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: ":jtb_logo_icon:"
     }
   }
 }
 
-class FinanceRule extends Rule {
-  match(from) {
-    return from.includes('mufg');
+class MufgRule extends Rule {
+  constructor() {
+    super();
+    this.domain = 'mufg.jp';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: ":mufg_logo_icon:"
     }
   }
 }
 
 class YoutrustRule extends Rule {
-  match(from) {
-    return from.includes('youtrust');
+  constructor() {
+    super();
+    this.domain = 'youtrust.jp';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_HR_CHANNEL'),
-      icon_emoji: ""
+      icon_emoji: "youtrust_logo_icon"
     }
   }
 }
 
 class OffersRule extends Rule {
-  match(from) {
-    return from.includes('offers.jp');
+  constructor() {
+    super();
+    this.domain = 'offers.jp';
   }
 
   config() {
@@ -152,8 +173,9 @@ class OffersRule extends Rule {
 }
 
 class IssueRule extends Rule {
-  match(from) {
-    return from.includes('i-ssue.com');
+  constructor() {
+    super();
+    this.domain = 'i-ssue.com';
   }
 
   config() {
@@ -165,8 +187,9 @@ class IssueRule extends Rule {
 }
 
 class WantedlyRule extends Rule {
-  match(from) {
-    return from.includes('wantedly.com');
+  constructor() {
+    super();
+    this.domain = 'wantedly.com';
   }
 
   config() {
@@ -178,28 +201,15 @@ class WantedlyRule extends Rule {
 }
 
 class AgodaRule extends Rule {
-  match(from) {
-    return from.includes('agoda.com');
+  constructor() {
+    super();
+    this.domain = 'agoda.com';
   }
 
   config() {
     return {
       webhook_url: get_property('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":agoda:"
-    };
-  }
-}
-
-class GasRule extends Rule {
-  match(from) {
-    return from.includes('\n' +
-      'apps-scripts-notifications@google.com');
-  }
-
-  config() {
-    return {
-      webhook_url: get_property('SLACK_GAS_CHANNEL'),
-      icon_emoji: ":google_script_apps_logo_icon:"
     };
   }
 }
@@ -215,14 +225,13 @@ function get_config(message) {
     new GoogleRule(),
     new VpassRule(),
     new TripcomRule(),
-    new FinanceRule(),
+    new MufgRule(),
     new YoutrustRule(),
     new OffersRule(),
     new IssueRule(),
     new WantedlyRule(),
     new AgodaRule(),
     new JtbRule(),
-    new GasRule(),
   ];
 
   for (const element of rules) {
