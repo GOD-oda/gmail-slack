@@ -1,4 +1,8 @@
 function splitEmail(from) {
+  if (from == undefined) {
+    return ['', ''];
+  }
+
   return from.split('@');
 }
 class Rule {
