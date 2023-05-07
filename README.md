@@ -8,7 +8,7 @@ required
 - node >= 17.8.0
 
 ```shell
-npm i @google/clasp -g
+$ npm i @google/clasp -g
 ```
 
 ```shell
@@ -19,7 +19,11 @@ $ clasp login
 $ clasp clone <your_script_id>
 ```
 
+## Deploy
+
 ```shell
+$ npm install
+$ npm run build
 $ clasp push
 ```
 
