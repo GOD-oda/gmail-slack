@@ -1,4 +1,4 @@
-import {getConfig, SlackConfig} from "./get_slack_config";
+import {getConfig, SlackConfig} from "./GetSlackConfig";
 
 export function  main(): void {
   const threads = GmailApp.search('in:Inbox is:Unread', 0, 10)

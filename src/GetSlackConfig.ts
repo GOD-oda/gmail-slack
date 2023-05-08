@@ -38,6 +38,7 @@ export function getConfig(message: any): SlackConfig {
     IssueRule,
     WantedlyRule,
     AgodaRule,
+    FindyRule,
   ];
   
   for (const element of rules) {
@@ -276,5 +277,19 @@ const AgodaRule: Rule = {
       webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":agoda:"
     };
+  }
+}
+
+const FindyRule: Rule = {
+  domain: 'https://portal.want.jp/product/A63FEC34220684/detail',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINDY_CHANNEL'),
+      icon_emoji: ":findy_logo_icon:"
+    }
   }
 }
