@@ -2,3 +2,4 @@
 gmail-slack.iml
 node_modules
 dist/app.js
+.clasp.json
