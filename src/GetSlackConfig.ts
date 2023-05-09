@@ -281,7 +281,7 @@ const AgodaRule: Rule = {
 }
 
 const FindyRule: Rule = {
-  domain: 'https://portal.want.jp/product/A63FEC34220684/detail',
+  domain: 'findy-code.io',
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
