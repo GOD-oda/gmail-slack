@@ -39,6 +39,7 @@ export function getConfig(message: any): SlackConfig {
     WantedlyRule,
     AgodaRule,
     FindyRule,
+    AnaRule,
   ];
   
   for (const element of rules) {
@@ -290,6 +291,20 @@ const FindyRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_FINDY_CHANNEL'),
       icon_emoji: ":findy_logo_icon:"
+    }
+  }
+}
+
+const AnaRule: Rule = {
+  domain: '121.ana.co.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ":ana_logo_icon:"
     }
   }
 }
