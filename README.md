@@ -22,6 +22,10 @@ $ clasp clone <your_script_id>
 ## Deploy
 
 ```shell
+$ make deploy
+
+or
+
 $ npm install
 $ npm run build
 $ clasp push
