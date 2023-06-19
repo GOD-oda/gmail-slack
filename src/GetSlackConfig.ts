@@ -40,6 +40,7 @@ export function getConfig(message: any): SlackConfig {
     AgodaRule,
     FindyRule,
     AnaRule,
+    PaypayRule,
   ];
   
   for (const element of rules) {
@@ -305,6 +306,20 @@ const AnaRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":ana_logo_icon:"
+    }
+  }
+}
+
+const PaypayRule: Rule = {
+  domain: 'cc.paypay-bank.co.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ":paypay_logo_icon:"
     }
   }
 }
