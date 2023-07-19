@@ -41,6 +41,7 @@ export function getConfig(message: any): SlackConfig {
     FindyRule,
     AnaRule,
     PaypayRule,
+    SmbcRule,
   ];
   
   for (const element of rules) {
@@ -131,6 +132,22 @@ const VpassRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_VPASS_CHANNEL'),
       icon_emoji: "vpass_logo_icon"
+    }
+  }
+}
+
+const SmbcRule: Rule = {
+  domain: 'dn.smbc.co.jp',
+
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: "smbc_logo_icon"
     }
   }
 }
