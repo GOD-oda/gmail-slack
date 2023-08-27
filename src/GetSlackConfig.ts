@@ -9,7 +9,7 @@ interface Rule {
   config: (email: string) => SlackConfig;
 }
 
-function matchEmail(email: string, domain: string): boolean {
+const matchEmail = (email: string, domain: string): boolean => {
   const emailConfig: EmailConfig = splitEmail(email);
   return emailConfig.domain.includes(domain);
 }
@@ -20,7 +20,7 @@ export interface SlackConfig {
   webhook_url: string;
 }
 
-export function getConfig(message: any): SlackConfig {
+export const getConfig = (message: any): SlackConfig => {
   const from = message.getFrom();
 
   const rules: Rule[] = [
