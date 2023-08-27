@@ -1,26 +1,26 @@
 import {getConfig, SlackConfig} from "./GetSlackConfig";
 
 export function  main(): void {
-  const threads = GmailApp.search('in:Inbox is:Unread', 0, 10)
+  const threads = GmailApp.search('in:Inbox is:Unread', 0, 100)
 
   threads.forEach((thread: any): void => {
     thread.getMessages().forEach((message: any): void => {
       if (!message.isUnread()) { return }
 
-      send_to_slack(message);
+      sendToSlack(message);
     })
   })
 }
 declare let global: any;
 global.main = main;
 
-function debug_mode(): boolean {
+const debugMode = (): boolean => {
   const mode = PropertiesService.getScriptProperties().getProperty('DEBUG_MODE');
 
   return mode == 1;
 }
 
-function create_payload(message: any, config: any) {
+const createPayload = (message: any, config: any) => {
   return {
     username: message.getFrom(),
     attachments: [{
@@ -36,15 +36,15 @@ function create_payload(message: any, config: any) {
   };
 }
 
-function send_to_slack(message: any): void {
-  const config: SlackConfig = getConfig(message)
-  if (debug_mode()) {
+const sendToSlack = (message: any): void => {
+  const config: SlackConfig = getConfig(message);
+  if (debugMode()) {
     console.log(config);
   }
 
   if (config.webhook_url == undefined || config.webhook_url == '') { return }
   const headers = { "Content-type": "application/json" }
-  const payload = create_payload(message, config)
+  const payload = createPayload(message, config)
   const options = {
     "method": "post",
     "headers": headers,
@@ -52,7 +52,7 @@ function send_to_slack(message: any): void {
     // "muteHttpExceptions": true
   }
 
-  if (debug_mode()) {
+  if (debugMode()) {
     console.log({
       from: message.getFrom()
     });
