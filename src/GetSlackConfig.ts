@@ -42,6 +42,7 @@ export const getConfig = (message: any): SlackConfig => {
     AnaRule,
     PaypayRule,
     SmbcRule,
+    SmartExRule
   ];
   
   for (const element of rules) {
@@ -337,6 +338,20 @@ const PaypayRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":paypay_logo_icon:"
+    }
+  }
+}
+
+const SmartExRule: Rule = {
+  domain: 'expy.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ":smartex_logo_icon:"
     }
   }
 }
