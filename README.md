@@ -17,6 +17,8 @@ $ clasp login
 
 ```shell
 $ clasp clone <your_script_id>
+
+and Rewrite rootDir to dist
 ```
 
 ## Deploy
