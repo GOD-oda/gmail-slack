@@ -42,7 +42,8 @@ export const getConfig = (message: any): SlackConfig => {
     AnaRule,
     PaypayRule,
     SmbcRule,
-    SmartExRule
+    SmartExRule,
+    PearsonRule,
   ];
   
   for (const element of rules) {
@@ -352,6 +353,20 @@ const SmartExRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":smartex_logo_icon:"
+    }
+  }
+}
+
+const PearsonRule: Rule = {
+  domain: 'pearson.com',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_AMAZON_CHANNEL'),
+      icon_emoji: ":pearson_logo_icon:"
     }
   }
 }
