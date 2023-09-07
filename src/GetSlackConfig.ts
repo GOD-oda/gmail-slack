@@ -44,6 +44,7 @@ export const getConfig = (message: any): SlackConfig => {
     SmbcRule,
     SmartExRule,
     PearsonRule,
+    FreeeRule,
   ];
   
   for (const element of rules) {
@@ -367,6 +368,20 @@ const PearsonRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_AMAZON_CHANNEL'),
       icon_emoji: ":pearson_logo_icon:"
+    }
+  }
+}
+
+const FreeeRule: Rule = {
+  domain: 'freee.co.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ":freee_logo_icon:"
     }
   }
 }
