@@ -45,6 +45,7 @@ export const getConfig = (message: any): SlackConfig => {
     SmartExRule,
     PearsonRule,
     FreeeRule,
+    LaprasRule,
   ];
   
   for (const element of rules) {
