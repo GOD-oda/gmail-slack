@@ -385,3 +385,17 @@ const FreeeRule: Rule = {
     }
   }
 }
+
+const LaprasRule: Rule = {
+  domain: 'mail.lapras.com',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      icon_emoji: ":lapras_logo_icon:"
+    }
+  }
+}
