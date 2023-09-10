@@ -46,6 +46,7 @@ export const getConfig = (message: any): SlackConfig => {
     PearsonRule,
     FreeeRule,
     LaprasRule,
+    MinkabuRule,
   ];
   
   for (const element of rules) {
@@ -397,6 +398,20 @@ const LaprasRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: ":lapras_logo_icon:"
+    }
+  }
+}
+
+const MinkabuRule: Rule = {
+  domain: 'minkabu.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ":minkabu_logo_icon:"
     }
   }
 }
