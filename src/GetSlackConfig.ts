@@ -47,6 +47,7 @@ export const getConfig = (message: any): SlackConfig => {
     FreeeRule,
     LaprasRule,
     MinkabuRule,
+    ToyotaRentacarRule,
   ];
   
   for (const element of rules) {
@@ -415,3 +416,19 @@ const MinkabuRule: Rule = {
     }
   }
 }
+
+const ToyotaRentacarRule: Rule = {
+  domain: 'rent-toyota.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ":toyotarentacar_logo_icon:"
+    }
+  }
+}
+
+
