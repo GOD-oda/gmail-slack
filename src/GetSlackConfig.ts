@@ -49,6 +49,7 @@ export const getConfig = (message: any): SlackConfig => {
     MinkabuRule,
     ToyotaRentacarRule,
     ExpediaRule,
+    SbiRule,
   ];
   
   for (const element of rules) {
@@ -442,6 +443,20 @@ const ExpediaRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":expedia_logo_icon:"
+    }
+  }
+}
+
+const SbiRule: Rule = {
+  domain: 'sbisec.co.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ":sbi_logo_icon:"
     }
   }
 }
