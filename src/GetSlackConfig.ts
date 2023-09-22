@@ -48,6 +48,7 @@ export const getConfig = (message: any): SlackConfig => {
     LaprasRule,
     MinkabuRule,
     ToyotaRentacarRule,
+    ExpediaRule,
   ];
   
   for (const element of rules) {
@@ -431,4 +432,16 @@ const ToyotaRentacarRule: Rule = {
   }
 }
 
-
+const ExpediaRule: Rule = {
+  domain: 'jp.expediamail.com',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      icon_emoji: ":expedia_logo_icon:"
+    }
+  }
+}
