@@ -51,6 +51,7 @@ export const getConfig = (message: any): SlackConfig => {
     ExpediaRule,
     SbiRule,
     TakarakujiRule,
+    DevtoRule,
   ];
   
   for (const element of rules) {
@@ -472,6 +473,20 @@ const TakarakujiRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":takarakuji_logo_icon:"
+    }
+  }
+}
+
+const DevtoRule: Rule = {
+  domain: 'dev.to',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      icon_emoji: ":devto_logo_icon:"
     }
   }
 }
