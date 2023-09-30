@@ -52,6 +52,7 @@ export const getConfig = (message: any): SlackConfig => {
     SbiRule,
     TakarakujiRule,
     DevtoRule,
+    DocomoCycleRule,
   ];
   
   for (const element of rules) {
@@ -487,6 +488,20 @@ const DevtoRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":devto_logo_icon:"
+    }
+  }
+}
+
+const DocomoCycleRule: Rule = {
+  domain: 'docomo-cycle.jp',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_MOBILITY_CHANNEL'),
+      icon_emoji: ":docomo_cycle_logo_icon:"
     }
   }
 }
