@@ -20,6 +20,12 @@ export interface SlackConfig {
   webhook_url: string;
 }
 
+const defaultConfig: SlackConfig = {
+  address: "",
+  icon_emoji: "",
+  webhook_url: ""
+}
+
 export const getConfig = (message: any): SlackConfig => {
   const from = message.getFrom();
 
@@ -175,17 +181,18 @@ const GoogleRule: Rule = {
   },
 
   config(email: string): SlackConfig {
-    const slackConfig: SlackConfig = {
-      address: "", icon_emoji: "", webhook_url: ""
-    };
+    if (this.list == undefined) {
+      return defaultConfig;
+    }
+
     const emailConfig: EmailConfig = splitEmail(email);
-    for (const list: SlackConfig of this.list) {
+    for (const list of this.list) {
       if (list.address == emailConfig.address) {
         return list;
       }
     }
-    
-    return slackConfig;
+
+    return defaultConfig;
   }
 }
 
