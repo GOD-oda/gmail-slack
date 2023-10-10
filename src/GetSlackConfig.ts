@@ -60,6 +60,7 @@ export const getConfig = (message: any): SlackConfig => {
     DevtoRule,
     DocomoCycleRule,
     HelloCyclingRule,
+    CloudflareRule,
   ];
   
   for (const element of rules) {
@@ -524,6 +525,20 @@ const HelloCyclingRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_MOBILITY_CHANNEL'),
       icon_emoji: ":hello_cycling_logo_icon:"
+    }
+  }
+}
+
+const CloudflareRule: Rule = {
+  domain: 'notify.cloudflare.com',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      icon_emoji: ":cloudflare_logo_icon:"
     }
   }
 }
