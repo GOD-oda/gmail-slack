@@ -17,17 +17,21 @@ $ clasp login
 
 ```shell
 $ clasp clone <your_script_id>
-
-and Rewrite rootDir to dist
 ```
+
+and remove app.js, appsscript.json
+
+and rewrite rootDir to dist 
 
 ## Deploy
 
 ```shell
 $ make deploy
+```
 
 or
 
+```shell
 $ npm install
 $ npm run build
 $ clasp push
