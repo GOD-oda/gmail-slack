@@ -61,6 +61,7 @@ export const getConfig = (message: any): SlackConfig => {
     DocomoCycleRule,
     HelloCyclingRule,
     CloudflareRule,
+    CredlyRule
   ];
   
   for (const element of rules) {
@@ -539,6 +540,20 @@ const CloudflareRule: Rule = {
       address: "",
       webhook_url: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":cloudflare_logo_icon:"
+    }
+  }
+}
+
+const CredlyRule: Rule = {
+  domain: 'credly.com',
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      icon_emoji: ":credly_logo_icon:"
     }
   }
 }
