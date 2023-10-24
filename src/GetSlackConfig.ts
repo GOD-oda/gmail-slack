@@ -47,7 +47,9 @@ export const getConfig = (message: any): SlackConfig => {
     FindyRule,
     AnaRule,
     PaypayRule,
+    // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
     SmbcRule,
+    SmbcMsgRule,
     SmartExRule,
     PearsonRule,
     FreeeRule,
@@ -159,6 +161,21 @@ const VpassRule: Rule = {
 
 const SmbcRule: Rule = {
   domain: 'dn.smbc.co.jp',
+
+  match(email: string): boolean {
+    return matchEmail(email, this.domain);
+  },
+
+  config(): SlackConfig {
+    return {
+      address: "",
+      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: "smbc_logo_icon"
+    }
+  }
+}
+const SmbcMsgRule: Rule = {
+  domain: 'msg.smbc.co.jp',
 
   match(email: string): boolean {
     return matchEmail(email, this.domain);
