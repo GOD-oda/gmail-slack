@@ -208,7 +208,7 @@ const GoogleRule: Rule = {
 
     const emailConfig: EmailConfig = splitEmail(email);
     for (const list of this.list) {
-      if (list.address == emailConfig.address) {
+      if (emailConfig.address.includes(list.address)) {
         return list;
       }
     }
