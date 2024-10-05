@@ -168,7 +168,7 @@ class AmericanexpressRule extends Rule  {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_AMERICANEXPRESS_CHANNEL'),
+      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
       icon_emoji: "amex_logo_icon"
     }
   }
