@@ -200,13 +200,15 @@ class SmbcRule extends Rule {
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject();
+
+    return ["口座引き落としの事前お知らせ"].some(pattern => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
       icon_emoji: "smbc_logo_icon"
     }
   }
