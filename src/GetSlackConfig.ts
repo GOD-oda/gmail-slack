@@ -160,7 +160,9 @@ class AmericanexpressRule extends Rule  {
   }
   
   canSend(): boolean {
-    return this.gmailMessage.getSubject().includes("次回口座振替のお知らせ");
+    const subject = this.gmailMessage.getSubject()
+
+    return ["次回口座振替のお知らせ", "カードご利用金額のお知らせ"].some(pattern => subject.includes(pattern));
   }
   
   config(): SlackConfig {
