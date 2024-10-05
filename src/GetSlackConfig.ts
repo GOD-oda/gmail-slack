@@ -1,15 +1,29 @@
 import {EmailConfig, splitEmail} from "./SplitEmail";
 import { getProperty } from "./GetGasProperty";
 
-interface Rule {
-  domain: string;
-  list?: SlackConfig[];
-
-  canSend: () => boolean;
-  match: (email: string) => boolean;
-  config: (email: string) => SlackConfig;
+interface GmailMessage {
+  getFrom: () => string;
 }
 
+abstract class Rule {
+  // TODO: 各クラスでデフォルトセットした方が良さそう？
+  domain: string = "";
+  list: SlackConfig[] = [];
+  // @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
+  gmailMessage: GmailMessage;
+
+  constructor(gmailMessage: GmailMessage) {
+    this.gmailMessage = gmailMessage;
+  }
+
+  abstract canSend(): boolean;
+  abstract config(): SlackConfig;
+  match(): boolean {
+    return matchEmail(this.gmailMessage.getFrom(), this.domain);
+  }
+}
+
+// TODO: Ruleクラスの処理にした方が良さそう
 const matchEmail = (email: string, domain: string): boolean => {
   const emailConfig: EmailConfig = splitEmail(email);
   return emailConfig.domain.includes(domain);
@@ -27,50 +41,50 @@ const defaultConfig: SlackConfig = {
   webhook_url: ""
 }
 
-export const getConfig = (message: any): SlackConfig | null => {
-  const from = message.getFrom();
-
+export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
   const rules: Rule[] = [
-    RakutenRule,
-    ConnpassRule,
-    AmazonRule,
-    AmericanexpressRule,
-    VpassRule,
-    GoogleRule,
-    TripcomRule,
-    JtbRule,
-    MufgRule,
-    YoutrustRule,
-    OffersRule,
-    IssueRule,
-    WantedlyRule,
-    AgodaRule,
-    FindyRule,
-    AnaRule,
-    PaypayRule,
-    SmbcRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
-    SmbcMsgRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
-    SmartExRule,
-    PearsonRule,
-    FreeeRule,
-    LaprasRule,
-    MinkabuRule,
-    ToyotaRentacarRule,
-    ExpediaRule,
-    SbiRule,
-    TakarakujiRule,
-    DevtoRule,
-    DocomoCycleRule,
-    HelloCyclingRule,
-    CloudflareRule,
-    CredlyRule,
-    UdemyRule,
+    new RakutenRule(gmailMessage),
+    new ConnpassRule(gmailMessage),
+    new AmazonRule(gmailMessage),
+    new AmericanexpressRule(gmailMessage),
+    new VpassRule(gmailMessage),
+    new GoogleRule(gmailMessage),
+    new TripcomRule(gmailMessage),
+    new JtbRule(gmailMessage),
+    new MufgRule(gmailMessage),
+    new YoutrustRule(gmailMessage),
+    new OffersRule(gmailMessage),
+    new IssueRule(gmailMessage),
+    new WantedlyRule(gmailMessage),
+    new AgodaRule(gmailMessage),
+    new FindyRule(gmailMessage),
+    new AnaRule(gmailMessage),
+    new PaypayRule(gmailMessage),
+    new SmbcRule(gmailMessage), // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
+    new SmbcMsgRule(gmailMessage), // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
+    new SmartExRule(gmailMessage),
+    new PearsonRule(gmailMessage),
+    new FreeeRule(gmailMessage),
+    new LaprasRule(gmailMessage),
+    new MinkabuRule(gmailMessage),
+    new ToyotaRentacarRule(gmailMessage),
+    new ExpediaRule(gmailMessage),
+    new SbiRule(gmailMessage),
+    new TakarakujiRule(gmailMessage),
+    new DevtoRule(gmailMessage),
+    new DocomoCycleRule(gmailMessage),
+    new HelloCyclingRule(gmailMessage),
+    new CloudflareRule(gmailMessage),
+    new CredlyRule(gmailMessage),
+    new UdemyRule(gmailMessage),
   ];
 
-  for (const element of rules) {
-    if (element.match(from)) {
-      if (element.canSend()) {
-        return element.config(from);
+  for (const rule of rules) {
+    rule.gmailMessage = gmailMessage;
+
+    if (rule.match()) {
+      if (rule.canSend()) {
+        return rule.config();
       } else {
         return null;
       }
@@ -80,15 +94,16 @@ export const getConfig = (message: any): SlackConfig | null => {
   return null;
 }
 
-const RakutenRule: Rule =  {
-  domain: 'rakuten',
+class RakutenRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "rakuten";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
-  
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -98,14 +113,15 @@ const RakutenRule: Rule =  {
   }
 }
 
-const ConnpassRule: Rule = {
-  domain: 'connpass',
+class ConnpassRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "connpass";
+  }
+  
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -116,15 +132,16 @@ const ConnpassRule: Rule = {
   }
 }
 
-const AmazonRule: Rule = {
-  domain: 'amazon',
+class AmazonRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "amazon";
+  }
+  
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
-
+  }
+  
   config(): SlackConfig {
     return {
       address: "",
@@ -134,14 +151,15 @@ const AmazonRule: Rule = {
   }
 }
 
-const AmericanexpressRule: Rule  = {
-  domain: 'americanexpress',
+class AmericanexpressRule extends Rule  {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "americanexpress";
+  }
+  
   canSend(): boolean {
-    return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+    return true;
+  }
   
   config(): SlackConfig {
     return {
@@ -152,14 +170,15 @@ const AmericanexpressRule: Rule  = {
   }
 }
 
-const VpassRule: Rule = {
-  domain:  'vpass.ne.jp',
+class VpassRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "vpass.ne.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -170,14 +189,15 @@ const VpassRule: Rule = {
   }
 }
 
-const SmbcRule: Rule = {
-  domain: 'dn.smbc.co.jp',
+class SmbcRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "dn.smbc.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -187,14 +207,15 @@ const SmbcRule: Rule = {
     }
   }
 }
-const SmbcMsgRule: Rule = {
-  domain: 'msg.smbc.co.jp',
+class SmbcMsgRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "msg.smbc.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -205,25 +226,26 @@ const SmbcMsgRule: Rule = {
   }
 }
 
-const GoogleRule: Rule = {
-  domain: 'google.com',
-  list: [
-    { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
-    { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
-  ],
+class GoogleRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "google.com";
+    this.list = [
+      { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
+      { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
+    ]
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
-  config(email: string): SlackConfig {
+  config(): SlackConfig {
     if (this.list == undefined) {
       return defaultConfig;
     }
 
-    const emailConfig: EmailConfig = splitEmail(email);
+    const emailConfig: EmailConfig = splitEmail(this.gmailMessage.getFrom());
     for (const list of this.list) {
       if (emailConfig.address.includes(list.address)) {
         return list;
@@ -234,14 +256,15 @@ const GoogleRule: Rule = {
   }
 }
 
-const TripcomRule: Rule = {
-  domain: 'trip.com',
+class TripcomRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "trip.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -252,14 +275,15 @@ const TripcomRule: Rule = {
   }
 }
 
-const JtbRule: Rule = {
-  domain: 'jtb.co.jp',
+class JtbRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "jtb.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -270,14 +294,15 @@ const JtbRule: Rule = {
   }
 }
 
-const MufgRule: Rule = {
-  domain: 'mufg.jp',
+class MufgRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "mufg.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -288,14 +313,15 @@ const MufgRule: Rule = {
   }
 }
 
-const YoutrustRule: Rule = {
-  domain: 'youtrust.jp',
+class YoutrustRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "youtrust.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -306,14 +332,15 @@ const YoutrustRule: Rule = {
   }
 }
 
-const OffersRule: Rule = {
-  domain:  'offers.jp',
+class OffersRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "offers.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -324,14 +351,15 @@ const OffersRule: Rule = {
   }
 }
 
-const IssueRule: Rule = {
-  domain: 'i-ssue.com',
+class IssueRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "i-ssue.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -342,14 +370,15 @@ const IssueRule: Rule = {
   }
 }
 
-const WantedlyRule: Rule = {
-  domain: 'wantedly.com',
+class WantedlyRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "wantedly.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -360,14 +389,15 @@ const WantedlyRule: Rule = {
   }
 }
 
-const AgodaRule: Rule = {
-  domain: 'agoda.com',
+class AgodaRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "agoda.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
 
   config(): SlackConfig {
     return {
@@ -378,14 +408,16 @@ const AgodaRule: Rule = {
   }
 }
 
-const FindyRule: Rule = {
-  domain: 'findy-code.io',
+class FindyRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "findy-code.io";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -395,14 +427,16 @@ const FindyRule: Rule = {
   }
 }
 
-const AnaRule: Rule = {
-  domain: '121.ana.co.jp',
+class AnaRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "121.ana.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -412,14 +446,15 @@ const AnaRule: Rule = {
   }
 }
 
-const PaypayRule: Rule = {
-  domain: 'cc.paypay-bank.co.jp',
+class PaypayRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "cc.paypay-bank.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
   config(): SlackConfig {
     return {
       address: "",
@@ -429,14 +464,16 @@ const PaypayRule: Rule = {
   }
 }
 
-const SmartExRule: Rule = {
-  domain: 'expy.jp',
+class SmartExRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "expy.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -446,14 +483,16 @@ const SmartExRule: Rule = {
   }
 }
 
-const PearsonRule: Rule = {
-  domain: 'pearson.com',
+class PearsonRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "pearson.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -463,14 +502,16 @@ const PearsonRule: Rule = {
   }
 }
 
-const FreeeRule: Rule = {
-  domain: 'freee.co.jp',
+class FreeeRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "freee.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -480,14 +521,16 @@ const FreeeRule: Rule = {
   }
 }
 
-const LaprasRule: Rule = {
-  domain: 'mail.lapras.com',
+class LaprasRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "mail.lapras.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -497,14 +540,16 @@ const LaprasRule: Rule = {
   }
 }
 
-const MinkabuRule: Rule = {
-  domain: 'minkabu.jp',
+class MinkabuRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "minkabu.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -514,14 +559,16 @@ const MinkabuRule: Rule = {
   }
 }
 
-const ToyotaRentacarRule: Rule = {
-  domain: 'rent-toyota.jp',
+class ToyotaRentacarRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "rent-toyota.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -531,14 +578,16 @@ const ToyotaRentacarRule: Rule = {
   }
 }
 
-const ExpediaRule: Rule = {
-  domain: 'jp.expediamail.com',
+class ExpediaRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "jp.expediamail.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -548,14 +597,16 @@ const ExpediaRule: Rule = {
   }
 }
 
-const SbiRule: Rule = {
-  domain: 'sbisec.co.jp',
+class SbiRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "sbisec.co.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -565,14 +616,16 @@ const SbiRule: Rule = {
   }
 }
 
-const TakarakujiRule: Rule = {
-  domain: 'takarakuji-official.jp',
+class TakarakujiRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "takarakuji-official.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -582,14 +635,16 @@ const TakarakujiRule: Rule = {
   }
 }
 
-const DevtoRule: Rule = {
-  domain: 'dev.to',
+class DevtoRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "dev.to";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -599,14 +654,16 @@ const DevtoRule: Rule = {
   }
 }
 
-const DocomoCycleRule: Rule = {
-  domain: 'docomo-cycle.jp',
+class DocomoCycleRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "docomo-cycle.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -616,14 +673,16 @@ const DocomoCycleRule: Rule = {
   }
 }
 
-const HelloCyclingRule: Rule = {
-  domain: 'hellocycling.jp',
+class HelloCyclingRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "hellocycling.jp";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -633,14 +692,16 @@ const HelloCyclingRule: Rule = {
   }
 }
 
-const CloudflareRule: Rule = {
-  domain: 'notify.cloudflare.com',
+class CloudflareRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "notify.cloudflare.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -650,14 +711,16 @@ const CloudflareRule: Rule = {
   }
 }
 
-const CredlyRule: Rule = {
-  domain: 'credly.com',
+class CredlyRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "credly.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
@@ -667,14 +730,16 @@ const CredlyRule: Rule = {
   }
 }
 
-const UdemyRule: Rule = {
-  domain: 'e.udemymail.com',
+class UdemyRule extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "e.udemymail.com";
+  }
+
   canSend(): boolean {
     return false;
-  },
-  match(email: string): boolean {
-    return matchEmail(email, this.domain);
-  },
+  }
+
   config(): SlackConfig {
     return {
       address: "",
