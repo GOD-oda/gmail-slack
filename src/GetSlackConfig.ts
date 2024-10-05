@@ -1,15 +1,16 @@
 import {EmailConfig, splitEmail} from "./SplitEmail";
 import { getProperty } from "./GetGasProperty";
 
+// @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
 interface GmailMessage {
   getFrom: () => string;
+  getSubject: () => string;
 }
 
 abstract class Rule {
   // TODO: 各クラスでデフォルトセットした方が良さそう？
   domain: string = "";
   list: SlackConfig[] = [];
-  // @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
   gmailMessage: GmailMessage;
 
   constructor(gmailMessage: GmailMessage) {
@@ -32,16 +33,17 @@ const matchEmail = (email: string, domain: string): boolean => {
 export interface SlackConfig {
   address: string;
   icon_emoji: string;
-  webhook_url: string;
+  channel: string;
 }
 
 const defaultConfig: SlackConfig = {
   address: "",
   icon_emoji: "",
-  webhook_url: ""
+  channel: ""
 }
 
 export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
+  // TODO: AmericanexpressRule以外はgasでchannelを設定していないので動かない
   const rules: Rule[] = [
     new RakutenRule(gmailMessage),
     new ConnpassRule(gmailMessage),
@@ -107,7 +109,7 @@ class RakutenRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_RAKUTEN_CHANNEL'),
+      channel: getProperty('SLACK_RAKUTEN_CHANNEL'),
       icon_emoji: ":rakuten:"
     }
   }
@@ -126,7 +128,7 @@ class ConnpassRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_CONNPASS_CHANNEL'),
+      channel: getProperty('SLACK_CONNPASS_CHANNEL'),
       icon_emoji: "connpass_logo_icon"
     }
   }
@@ -145,7 +147,7 @@ class AmazonRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_AMAZON_CHANNEL'),
+      channel: getProperty('SLACK_AMAZON_CHANNEL'),
       icon_emoji: "amazon_logo_icon"
     }
   }
@@ -158,13 +160,13 @@ class AmericanexpressRule extends Rule  {
   }
   
   canSend(): boolean {
-    return true;
+    return this.gmailMessage.getSubject().includes("次回口座振替のお知らせ");
   }
   
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_AMERICANEXPRESS_CHANNEL'),
+      channel: getProperty('SLACK_AMERICANEXPRESS_CHANNEL'),
       icon_emoji: "amex_logo_icon"
     }
   }
@@ -183,7 +185,7 @@ class VpassRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_VPASS_CHANNEL'),
+      channel: getProperty('SLACK_VPASS_CHANNEL'),
       icon_emoji: "vpass_logo_icon"
     }
   }
@@ -202,7 +204,7 @@ class SmbcRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: "smbc_logo_icon"
     }
   }
@@ -220,7 +222,7 @@ class SmbcMsgRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: "smbc_logo_icon"
     }
   }
@@ -231,8 +233,8 @@ class GoogleRule extends Rule {
     super(gmailMessage);
     this.domain = "google.com";
     this.list = [
-      { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
-      { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
+      { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', channel: getProperty('SLACK_GOOGLE_CHANNEL') },
+      { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', channel: getProperty('SLACK_GOOGLE_CHANNEL') },
     ]
   }
 
@@ -269,7 +271,7 @@ class TripcomRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":trip_com_logo_icon:"
     }
   }
@@ -288,7 +290,7 @@ class JtbRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":jtb_logo_icon:"
     }
   }
@@ -307,7 +309,7 @@ class MufgRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":mufg_logo_icon:"
     }
   }
@@ -326,7 +328,7 @@ class YoutrustRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      channel: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: "youtrust_logo_icon"
     }
   }
@@ -345,7 +347,7 @@ class OffersRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      channel: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: ":offers_logo:"
     }
   }
@@ -364,7 +366,7 @@ class IssueRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      channel: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: ":issue_logo:"
     }
   }
@@ -383,7 +385,7 @@ class WantedlyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      channel: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: ":wantedly_mark_lightbg:"
     }
   }
@@ -402,7 +404,7 @@ class AgodaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":agoda:"
     };
   }
@@ -421,7 +423,7 @@ class FindyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINDY_CHANNEL'),
+      channel: getProperty('SLACK_FINDY_CHANNEL'),
       icon_emoji: ":findy_logo_icon:"
     }
   }
@@ -440,7 +442,7 @@ class AnaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":ana_logo_icon:"
     }
   }
@@ -458,7 +460,7 @@ class PaypayRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":paypay_logo_icon:"
     }
   }
@@ -477,7 +479,7 @@ class SmartExRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":smartex_logo_icon:"
     }
   }
@@ -496,7 +498,7 @@ class PearsonRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_AMAZON_CHANNEL'),
+      channel: getProperty('SLACK_AMAZON_CHANNEL'),
       icon_emoji: ":pearson_logo_icon:"
     }
   }
@@ -515,7 +517,7 @@ class FreeeRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":freee_logo_icon:"
     }
   }
@@ -534,7 +536,7 @@ class LaprasRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_HR_CHANNEL'),
+      channel: getProperty('SLACK_HR_CHANNEL'),
       icon_emoji: ":lapras_logo_icon:"
     }
   }
@@ -553,7 +555,7 @@ class MinkabuRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":minkabu_logo_icon:"
     }
   }
@@ -572,7 +574,7 @@ class ToyotaRentacarRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":toyotarentacar_logo_icon:"
     }
   }
@@ -591,7 +593,7 @@ class ExpediaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TRIP_CHANNEL'),
+      channel: getProperty('SLACK_TRIP_CHANNEL'),
       icon_emoji: ":expedia_logo_icon:"
     }
   }
@@ -610,7 +612,7 @@ class SbiRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":sbi_logo_icon:"
     }
   }
@@ -629,7 +631,7 @@ class TakarakujiRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
       icon_emoji: ":takarakuji_logo_icon:"
     }
   }
@@ -648,7 +650,7 @@ class DevtoRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      channel: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":devto_logo_icon:"
     }
   }
@@ -667,7 +669,7 @@ class DocomoCycleRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_MOBILITY_CHANNEL'),
+      channel: getProperty('SLACK_MOBILITY_CHANNEL'),
       icon_emoji: ":docomo_cycle_logo_icon:"
     }
   }
@@ -686,7 +688,7 @@ class HelloCyclingRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_MOBILITY_CHANNEL'),
+      channel: getProperty('SLACK_MOBILITY_CHANNEL'),
       icon_emoji: ":hello_cycling_logo_icon:"
     }
   }
@@ -705,7 +707,7 @@ class CloudflareRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      channel: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":cloudflare_logo_icon:"
     }
   }
@@ -724,7 +726,7 @@ class CredlyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      channel: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":credly_logo_icon:"
     }
   }
@@ -743,7 +745,7 @@ class UdemyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      webhook_url: getProperty('SLACK_TECH_CHANNEL'),
+      channel: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":udemy_logo_icon:"
     }
   }

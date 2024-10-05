@@ -22,6 +22,7 @@ const debugMode = (): boolean => {
 
 const createPayload = (message: any, config: any) => {
   return {
+    channel: config.channel,
     username: message.getFrom(),
     attachments: [{
       color: "36a64f",
@@ -32,7 +33,7 @@ const createPayload = (message: any, config: any) => {
         }
       ]
     }],
-    icon_emoji: config['icon_emoji']
+    icon_emoji: config['icon_emoji'] // TODO: 設定されない（payloadは合ってそうだけど）
   };
 }
 
@@ -48,8 +49,7 @@ const sendToSlack = (message: any): void => {
     return
   }
 
-  if (config.webhook_url == undefined || config.webhook_url == '') { return }
-  const headers = { "Content-type": "application/json" }
+  const headers = { "Content-type": "application/json", "Authorization": `Bearer ${PropertiesService.getScriptProperties().getProperty('USER_OAUTH_TOKEN')}` }
   const payload = createPayload(message, config)
   const options = {
     "method": "post",
@@ -60,10 +60,16 @@ const sendToSlack = (message: any): void => {
 
   if (debugMode()) {
     console.log({
-      from: message.getFrom()
+      from: message.getFrom(),
+      headers: headers,
+      payload: payload
     });
   }
-  UrlFetchApp.fetch(config.webhook_url, options)
+  const response = UrlFetchApp.fetch("https://slack.com/api/chat.postMessage", options)
+  if (debugMode()) {
+    console.log(JSON.parse(response.getContentText()));
+  }
+
   message.markRead()
 }
 
