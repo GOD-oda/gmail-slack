@@ -181,13 +181,15 @@ class VpassRule extends Rule {
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject();
+
+    return ["お支払い日のご案内"].some(pattern => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_VPASS_CHANNEL'),
+      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
       icon_emoji: "vpass_logo_icon"
     }
   }
