@@ -4,7 +4,8 @@ import { getProperty } from "./GetGasProperty";
 interface Rule {
   domain: string;
   list?: SlackConfig[];
-  
+
+  canSend: () => boolean;
   match: (email: string) => boolean;
   config: (email: string) => SlackConfig;
 }
@@ -30,44 +31,44 @@ export const getConfig = (message: any): SlackConfig => {
   const from = message.getFrom();
 
   const rules: Rule[] = [
-    // RakutenRule,
-    // ConnpassRule,
-    // AmazonRule,
-    // AmericanexpressRule,
-    // VpassRule,
-    // GoogleRule,
-    // TripcomRule,
-    // JtbRule,
-    // MufgRule,
-    // YoutrustRule,
-    // OffersRule,
-    // IssueRule,
-    // WantedlyRule,
-    // AgodaRule,
-    // FindyRule,
-    // AnaRule,
-    // PaypayRule,
-    // SmbcRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
-    // SmbcMsgRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
-    // SmartExRule,
-    // PearsonRule,
-    // FreeeRule,
-    // LaprasRule,
-    // MinkabuRule,
-    // ToyotaRentacarRule,
-    // ExpediaRule,
-    // SbiRule,
-    // TakarakujiRule,
-    // DevtoRule,
-    // DocomoCycleRule,
-    // HelloCyclingRule,
-    // CloudflareRule,
-    // CredlyRule,
-    // UdemyRule,
+    RakutenRule,
+    ConnpassRule,
+    AmazonRule,
+    AmericanexpressRule,
+    VpassRule,
+    GoogleRule,
+    TripcomRule,
+    JtbRule,
+    MufgRule,
+    YoutrustRule,
+    OffersRule,
+    IssueRule,
+    WantedlyRule,
+    AgodaRule,
+    FindyRule,
+    AnaRule,
+    PaypayRule,
+    SmbcRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
+    SmbcMsgRule, // TODO: 同じSMBCだけどドメインが複数の場合に1つのルールクラスで対応するか検討する
+    SmartExRule,
+    PearsonRule,
+    FreeeRule,
+    LaprasRule,
+    MinkabuRule,
+    ToyotaRentacarRule,
+    ExpediaRule,
+    SbiRule,
+    TakarakujiRule,
+    DevtoRule,
+    DocomoCycleRule,
+    HelloCyclingRule,
+    CloudflareRule,
+    CredlyRule,
+    UdemyRule,
   ];
   
   for (const element of rules) {
-    if (element.match(from)) {
+    if (element.match(from) && element.canSend()) {
       return element.config(from);
     }
   }
@@ -81,7 +82,9 @@ export const getConfig = (message: any): SlackConfig => {
 
 const RakutenRule: Rule =  {
   domain: 'rakuten',
-
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -97,6 +100,9 @@ const RakutenRule: Rule =  {
 
 const ConnpassRule: Rule = {
   domain: 'connpass',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -112,7 +118,9 @@ const ConnpassRule: Rule = {
 
 const AmazonRule: Rule = {
   domain: 'amazon',
-  
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -128,7 +136,9 @@ const AmazonRule: Rule = {
 
 const AmericanexpressRule: Rule  = {
   domain: 'americanexpress',
-
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -144,7 +154,9 @@ const AmericanexpressRule: Rule  = {
 
 const VpassRule: Rule = {
   domain:  'vpass.ne.jp',
-  
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -160,7 +172,9 @@ const VpassRule: Rule = {
 
 const SmbcRule: Rule = {
   domain: 'dn.smbc.co.jp',
-
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -175,7 +189,9 @@ const SmbcRule: Rule = {
 }
 const SmbcMsgRule: Rule = {
   domain: 'msg.smbc.co.jp',
-
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -195,7 +211,9 @@ const GoogleRule: Rule = {
     { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
     { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', webhook_url: getProperty('SLACK_GOOGLE_CHANNEL') },
   ],
-  
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -218,7 +236,9 @@ const GoogleRule: Rule = {
 
 const TripcomRule: Rule = {
   domain: 'trip.com',
-  
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -234,6 +254,9 @@ const TripcomRule: Rule = {
 
 const JtbRule: Rule = {
   domain: 'jtb.co.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -249,6 +272,9 @@ const JtbRule: Rule = {
 
 const MufgRule: Rule = {
   domain: 'mufg.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -264,6 +290,9 @@ const MufgRule: Rule = {
 
 const YoutrustRule: Rule = {
   domain: 'youtrust.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -279,6 +308,9 @@ const YoutrustRule: Rule = {
 
 const OffersRule: Rule = {
   domain:  'offers.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -294,6 +326,9 @@ const OffersRule: Rule = {
 
 const IssueRule: Rule = {
   domain: 'i-ssue.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -309,6 +344,9 @@ const IssueRule: Rule = {
 
 const WantedlyRule: Rule = {
   domain: 'wantedly.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -324,6 +362,9 @@ const WantedlyRule: Rule = {
 
 const AgodaRule: Rule = {
   domain: 'agoda.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -339,6 +380,9 @@ const AgodaRule: Rule = {
 
 const FindyRule: Rule = {
   domain: 'findy-code.io',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -353,6 +397,9 @@ const FindyRule: Rule = {
 
 const AnaRule: Rule = {
   domain: '121.ana.co.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -367,6 +414,9 @@ const AnaRule: Rule = {
 
 const PaypayRule: Rule = {
   domain: 'cc.paypay-bank.co.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -381,6 +431,9 @@ const PaypayRule: Rule = {
 
 const SmartExRule: Rule = {
   domain: 'expy.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -395,6 +448,9 @@ const SmartExRule: Rule = {
 
 const PearsonRule: Rule = {
   domain: 'pearson.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -409,6 +465,9 @@ const PearsonRule: Rule = {
 
 const FreeeRule: Rule = {
   domain: 'freee.co.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -423,6 +482,9 @@ const FreeeRule: Rule = {
 
 const LaprasRule: Rule = {
   domain: 'mail.lapras.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -437,6 +499,9 @@ const LaprasRule: Rule = {
 
 const MinkabuRule: Rule = {
   domain: 'minkabu.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -451,6 +516,9 @@ const MinkabuRule: Rule = {
 
 const ToyotaRentacarRule: Rule = {
   domain: 'rent-toyota.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -465,6 +533,9 @@ const ToyotaRentacarRule: Rule = {
 
 const ExpediaRule: Rule = {
   domain: 'jp.expediamail.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -479,6 +550,9 @@ const ExpediaRule: Rule = {
 
 const SbiRule: Rule = {
   domain: 'sbisec.co.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -493,6 +567,9 @@ const SbiRule: Rule = {
 
 const TakarakujiRule: Rule = {
   domain: 'takarakuji-official.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -507,6 +584,9 @@ const TakarakujiRule: Rule = {
 
 const DevtoRule: Rule = {
   domain: 'dev.to',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -521,6 +601,9 @@ const DevtoRule: Rule = {
 
 const DocomoCycleRule: Rule = {
   domain: 'docomo-cycle.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -535,6 +618,9 @@ const DocomoCycleRule: Rule = {
 
 const HelloCyclingRule: Rule = {
   domain: 'hellocycling.jp',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -549,6 +635,9 @@ const HelloCyclingRule: Rule = {
 
 const CloudflareRule: Rule = {
   domain: 'notify.cloudflare.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -563,6 +652,9 @@ const CloudflareRule: Rule = {
 
 const CredlyRule: Rule = {
   domain: 'credly.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
@@ -577,6 +669,9 @@ const CredlyRule: Rule = {
 
 const UdemyRule: Rule = {
   domain: 'e.udemymail.com',
+  canSend(): boolean {
+    return false;
+  },
   match(email: string): boolean {
     return matchEmail(email, this.domain);
   },
