@@ -37,11 +37,15 @@ const createPayload = (message: any, config: any) => {
 }
 
 const sendToSlack = (message: any): void => {
-  const config: SlackConfig = getConfig(message);
+  const config = getConfig(message);
   if (debugMode()) {
     console.log({
       slackConfig: config
     });
+  }
+
+  if (config === null) {
+    return
   }
 
   if (config.webhook_url == undefined || config.webhook_url == '') { return }

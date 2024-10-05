@@ -27,7 +27,7 @@ const defaultConfig: SlackConfig = {
   webhook_url: ""
 }
 
-export const getConfig = (message: any): SlackConfig => {
+export const getConfig = (message: any): SlackConfig | null => {
   const from = message.getFrom();
 
   const rules: Rule[] = [
@@ -66,18 +66,18 @@ export const getConfig = (message: any): SlackConfig => {
     CredlyRule,
     UdemyRule,
   ];
-  
+
   for (const element of rules) {
-    if (element.match(from) && element.canSend()) {
-      return element.config(from);
+    if (element.match(from)) {
+      if (element.canSend()) {
+        return element.config(from);
+      } else {
+        return null;
+      }
     }
   }
 
-  return {
-    address: "",
-    icon_emoji: "",
-    webhook_url: ""
-  };
+  return null;
 }
 
 const RakutenRule: Rule =  {
