@@ -79,6 +79,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new CloudflareRule(gmailMessage),
     new CredlyRule(gmailMessage),
     new UdemyRule(gmailMessage),
+    new Aws(gmailMessage),
   ];
 
   for (const rule of rules) {
@@ -754,5 +755,18 @@ class UdemyRule extends Rule {
       channel: getProperty('SLACK_TECH_CHANNEL'),
       icon_emoji: ":udemy_logo_icon:"
     }
+  }
+}
+
+class Aws extends Rule {
+  constructor(gmailMessage: GmailMessage) {
+    super(gmailMessage);
+    this.domain = "amazonaws.com";
+  }
+
+  canSend(): boolean {
+    const subject = this.gmailMessage.getSubject()
+
+    return ["月次コスト"].some(pattern => subject.includes(pattern));
   }
 }
