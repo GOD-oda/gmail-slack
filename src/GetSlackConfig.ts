@@ -183,7 +183,7 @@ class VpassRule extends Rule {
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject();
 
-    return ["お支払い日のご案内"].some(pattern => subject.includes(pattern));
+    return ["お支払い日のご案内", "お支払い金額のお知らせ"].some(pattern => subject.includes(pattern));
   }
 
   config(): SlackConfig {
