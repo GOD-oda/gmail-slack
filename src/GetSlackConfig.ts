@@ -769,4 +769,12 @@ class Aws extends Rule {
 
     return ["月次コスト"].some(pattern => subject.includes(pattern));
   }
+
+  config(): SlackConfig {
+    return {
+      address: "",
+      channel: getProperty('SLACK_FINANCE_CHANNEL'),
+      icon_emoji: ""
+    }
+  }
 }
