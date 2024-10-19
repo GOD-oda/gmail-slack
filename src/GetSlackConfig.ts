@@ -162,8 +162,13 @@ class AmericanexpressRule extends Rule  {
   
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject()
+    const targets = [
+      "次回口座振替のお知らせ",
+      "カードご利用金額のお知らせ",
+      "ご請求金額確定のご案内"
+    ]
 
-    return ["次回口座振替のお知らせ", "カードご利用金額のお知らせ"].some(pattern => subject.includes(pattern));
+    return targets.some(pattern => subject.includes(pattern));
   }
   
   config(): SlackConfig {
