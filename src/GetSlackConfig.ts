@@ -463,16 +463,21 @@ class AnaRule extends Rule {
 class PaypayRule extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
-    this.domain = "cc.paypay-bank.co.jp";
+    this.domain = "mail.paypay-card.co.jp";
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject()
+    const targets = [
+      "請求金額",
+    ]
+
+    return targets.some(pattern => subject.includes(pattern));
   }
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
+      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
       icon_emoji: ":paypay_logo_icon:"
     }
   }
