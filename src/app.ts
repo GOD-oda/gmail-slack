@@ -33,7 +33,7 @@ const createPayload = (message: any, config: any) => {
         }
       ]
     }],
-    icon_emoji: config['icon_emoji'] // TODO: 設定されない（payloadは合ってそうだけど）
+    icon_emoji: config['icon_emoji']
   };
 }
 
