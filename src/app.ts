@@ -49,7 +49,7 @@ const sendToSlack = (message: any): void => {
     return
   }
 
-  const headers = { "Content-type": "application/json", "Authorization": `Bearer ${PropertiesService.getScriptProperties().getProperty('USER_OAUTH_TOKEN')}` }
+  const headers = { "Content-type": "application/json", "Authorization": `Bearer ${PropertiesService.getScriptProperties().getProperty('OAUTH_TOKEN')}` }
   const payload = createPayload(message, config)
   const options = {
     "method": "post",
