@@ -45,7 +45,7 @@ const defaultConfig: SlackConfig = {
 export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
   // TODO: AmericanexpressRule以外はgasでchannelを設定していないので動かない
   const rules: Rule[] = [
-    new RakutenRule(gmailMessage),
+    new RakutenCardRule(gmailMessage),
     new ConnpassRule(gmailMessage),
     new AmazonRule(gmailMessage),
     new AmericanexpressRule(gmailMessage),
@@ -97,20 +97,26 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
   return null;
 }
 
-class RakutenRule extends Rule {
+class RakutenCardRule extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
-    this.domain = "rakuten";
+    this.domain = "rakuten-card";
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject()
+    const targets = [
+      "カードご請求金額のご案内",
+      "お支払い金額のご案内",
+    ]
+
+    return targets.some(pattern => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_RAKUTEN_CHANNEL'),
+      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
       icon_emoji: ":rakuten:"
     }
   }
