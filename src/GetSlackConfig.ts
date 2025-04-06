@@ -330,13 +330,16 @@ class MufgRule extends Rule {
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject();
+    const targets = ["（三菱ＵＦＪ銀行）口座振替処理（お引き落とし）未済のお知らせ"];
+
+    return targets.some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
       icon_emoji: ":mufg_logo_icon:",
     };
   }

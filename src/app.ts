@@ -21,10 +21,11 @@ declare let global: any;
 global.main = main;
 
 const debugMode = (): boolean => {
+  // @see https://developers.google.com/apps-script/reference/properties/properties?hl=ja#getProperty(String)
   const mode =
     PropertiesService.getScriptProperties().getProperty("DEBUG_MODE");
 
-  return mode === 1;
+  return mode === "1";
 };
 
 // biome-ignore lint/suspicious/noExplicitAny:
