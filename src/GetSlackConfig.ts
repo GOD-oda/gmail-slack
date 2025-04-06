@@ -1,5 +1,5 @@
-import {EmailConfig, splitEmail} from "./SplitEmail";
 import { getProperty } from "./GetGasProperty";
+import { type EmailConfig, splitEmail } from "./SplitEmail";
 
 // @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
 interface GmailMessage {
@@ -9,7 +9,7 @@ interface GmailMessage {
 
 abstract class Rule {
   // TODO: 各クラスでデフォルトセットした方が良さそう？
-  domain: string = "";
+  domain = "";
   list: SlackConfig[] = [];
   gmailMessage: GmailMessage;
 
@@ -28,7 +28,7 @@ abstract class Rule {
 const matchEmail = (email: string, domain: string): boolean => {
   const emailConfig: EmailConfig = splitEmail(email);
   return emailConfig.domain.includes(domain);
-}
+};
 
 export interface SlackConfig {
   address: string;
@@ -39,8 +39,8 @@ export interface SlackConfig {
 const defaultConfig: SlackConfig = {
   address: "",
   icon_emoji: "",
-  channel: ""
-}
+  channel: "",
+};
 
 export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
   // TODO: AmericanexpressRule以外はgasでchannelを設定していないので動かない
@@ -88,14 +88,14 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     if (rule.match()) {
       if (rule.canSend()) {
         return rule.config();
-      } else {
-        return null;
       }
+
+      return null;
     }
   }
 
   return null;
-}
+};
 
 class RakutenCardRule extends Rule {
   constructor(gmailMessage: GmailMessage) {
@@ -104,21 +104,18 @@ class RakutenCardRule extends Rule {
   }
 
   canSend(): boolean {
-    const subject = this.gmailMessage.getSubject()
-    const targets = [
-      "カードご請求金額のご案内",
-      "お支払い金額のご案内",
-    ]
+    const subject = this.gmailMessage.getSubject();
+    const targets = ["カードご請求金額のご案内", "お支払い金額のご案内"];
 
-    return targets.some(pattern => subject.includes(pattern));
+    return targets.some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
-      icon_emoji: ":rakuten:"
-    }
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      icon_emoji: ":rakuten:",
+    };
   }
 }
 
@@ -127,7 +124,7 @@ class ConnpassRule extends Rule {
     super(gmailMessage);
     this.domain = "connpass";
   }
-  
+
   canSend(): boolean {
     return false;
   }
@@ -135,9 +132,9 @@ class ConnpassRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_CONNPASS_CHANNEL'),
-      icon_emoji: "connpass_logo_icon"
-    }
+      channel: getProperty("SLACK_CONNPASS_CHANNEL"),
+      icon_emoji: "connpass_logo_icon",
+    };
   }
 }
 
@@ -146,43 +143,43 @@ class AmazonRule extends Rule {
     super(gmailMessage);
     this.domain = "amazon";
   }
-  
+
   canSend(): boolean {
     return false;
   }
-  
+
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_AMAZON_CHANNEL'),
-      icon_emoji: "amazon_logo_icon"
-    }
+      channel: getProperty("SLACK_AMAZON_CHANNEL"),
+      icon_emoji: "amazon_logo_icon",
+    };
   }
 }
 
-class AmericanexpressRule extends Rule  {
+class AmericanexpressRule extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "americanexpress";
   }
-  
+
   canSend(): boolean {
-    const subject = this.gmailMessage.getSubject()
+    const subject = this.gmailMessage.getSubject();
     const targets = [
       "次回口座振替のお知らせ",
       "カードご利用金額のお知らせ",
-      "ご請求金額確定のご案内"
-    ]
+      "ご請求金額確定のご案内",
+    ];
 
-    return targets.some(pattern => subject.includes(pattern));
+    return targets.some((pattern) => subject.includes(pattern));
   }
-  
+
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
-      icon_emoji: "amex_logo_icon"
-    }
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      icon_emoji: "amex_logo_icon",
+    };
   }
 }
 
@@ -195,15 +192,17 @@ class VpassRule extends Rule {
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject();
 
-    return ["お支払い日のご案内", "お支払い金額のお知らせ"].some(pattern => subject.includes(pattern));
+    return ["お支払い日のご案内", "お支払い金額のお知らせ"].some((pattern) =>
+      subject.includes(pattern),
+    );
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
-      icon_emoji: "vpass_logo_icon"
-    }
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      icon_emoji: "vpass_logo_icon",
+    };
   }
 }
 
@@ -216,15 +215,17 @@ class SmbcRule extends Rule {
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject();
 
-    return ["口座引き落としの事前お知らせ"].some(pattern => subject.includes(pattern));
+    return ["口座引き落としの事前お知らせ"].some((pattern) =>
+      subject.includes(pattern),
+    );
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
-      icon_emoji: "smbc_logo_icon"
-    }
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      icon_emoji: "smbc_logo_icon",
+    };
   }
 }
 class SmbcMsgRule extends Rule {
@@ -240,9 +241,9 @@ class SmbcMsgRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: "smbc_logo_icon"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: "smbc_logo_icon",
+    };
   }
 }
 
@@ -251,9 +252,17 @@ class GoogleRule extends Rule {
     super(gmailMessage);
     this.domain = "google.com";
     this.list = [
-      { address: 'calendar-notification', icon_emoji: ':google-calendar-logo-icon:', channel: getProperty('SLACK_GOOGLE_CHANNEL') },
-      { address: 'apps-scripts-notifications', icon_emoji: ':google_script_apps_logo_icon:', channel: getProperty('SLACK_GOOGLE_CHANNEL') },
-    ]
+      {
+        address: "calendar-notification",
+        icon_emoji: ":google-calendar-logo-icon:",
+        channel: getProperty("SLACK_GOOGLE_CHANNEL"),
+      },
+      {
+        address: "apps-scripts-notifications",
+        icon_emoji: ":google_script_apps_logo_icon:",
+        channel: getProperty("SLACK_GOOGLE_CHANNEL"),
+      },
+    ];
   }
 
   canSend(): boolean {
@@ -261,7 +270,7 @@ class GoogleRule extends Rule {
   }
 
   config(): SlackConfig {
-    if (this.list == undefined) {
+    if (this.list === undefined) {
       return defaultConfig;
     }
 
@@ -289,9 +298,9 @@ class TripcomRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":trip_com_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":trip_com_logo_icon:",
+    };
   }
 }
 
@@ -308,9 +317,9 @@ class JtbRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":jtb_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":jtb_logo_icon:",
+    };
   }
 }
 
@@ -327,9 +336,9 @@ class MufgRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ":mufg_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: ":mufg_logo_icon:",
+    };
   }
 }
 
@@ -346,9 +355,9 @@ class YoutrustRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_HR_CHANNEL'),
-      icon_emoji: "youtrust_logo_icon"
-    }
+      channel: getProperty("SLACK_HR_CHANNEL"),
+      icon_emoji: "youtrust_logo_icon",
+    };
   }
 }
 
@@ -365,9 +374,9 @@ class OffersRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_HR_CHANNEL'),
-      icon_emoji: ":offers_logo:"
-    }
+      channel: getProperty("SLACK_HR_CHANNEL"),
+      icon_emoji: ":offers_logo:",
+    };
   }
 }
 
@@ -384,9 +393,9 @@ class IssueRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_HR_CHANNEL'),
-      icon_emoji: ":issue_logo:"
-    }
+      channel: getProperty("SLACK_HR_CHANNEL"),
+      icon_emoji: ":issue_logo:",
+    };
   }
 }
 
@@ -403,9 +412,9 @@ class WantedlyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_HR_CHANNEL'),
-      icon_emoji: ":wantedly_mark_lightbg:"
-    }
+      channel: getProperty("SLACK_HR_CHANNEL"),
+      icon_emoji: ":wantedly_mark_lightbg:",
+    };
   }
 }
 
@@ -422,8 +431,8 @@ class AgodaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":agoda:"
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":agoda:",
     };
   }
 }
@@ -441,9 +450,9 @@ class FindyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINDY_CHANNEL'),
-      icon_emoji: ":findy_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINDY_CHANNEL"),
+      icon_emoji: ":findy_logo_icon:",
+    };
   }
 }
 
@@ -460,9 +469,9 @@ class AnaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":ana_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":ana_logo_icon:",
+    };
   }
 }
 
@@ -473,19 +482,17 @@ class PaypayRule extends Rule {
   }
 
   canSend(): boolean {
-    const subject = this.gmailMessage.getSubject()
-    const targets = [
-      "請求金額",
-    ]
+    const subject = this.gmailMessage.getSubject();
+    const targets = ["請求金額"];
 
-    return targets.some(pattern => subject.includes(pattern));
+    return targets.some((pattern) => subject.includes(pattern));
   }
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_PAYMENT_CHANNEL'),
-      icon_emoji: ":paypay_logo_icon:"
-    }
+      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      icon_emoji: ":paypay_logo_icon:",
+    };
   }
 }
 
@@ -502,9 +509,9 @@ class SmartExRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":smartex_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":smartex_logo_icon:",
+    };
   }
 }
 
@@ -521,9 +528,9 @@ class PearsonRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_AMAZON_CHANNEL'),
-      icon_emoji: ":pearson_logo_icon:"
-    }
+      channel: getProperty("SLACK_AMAZON_CHANNEL"),
+      icon_emoji: ":pearson_logo_icon:",
+    };
   }
 }
 
@@ -540,9 +547,9 @@ class FreeeRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ":freee_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: ":freee_logo_icon:",
+    };
   }
 }
 
@@ -559,9 +566,9 @@ class LaprasRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_HR_CHANNEL'),
-      icon_emoji: ":lapras_logo_icon:"
-    }
+      channel: getProperty("SLACK_HR_CHANNEL"),
+      icon_emoji: ":lapras_logo_icon:",
+    };
   }
 }
 
@@ -578,9 +585,9 @@ class MinkabuRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ":minkabu_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: ":minkabu_logo_icon:",
+    };
   }
 }
 
@@ -597,9 +604,9 @@ class ToyotaRentacarRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":toyotarentacar_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":toyotarentacar_logo_icon:",
+    };
   }
 }
 
@@ -616,9 +623,9 @@ class ExpediaRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TRIP_CHANNEL'),
-      icon_emoji: ":expedia_logo_icon:"
-    }
+      channel: getProperty("SLACK_TRIP_CHANNEL"),
+      icon_emoji: ":expedia_logo_icon:",
+    };
   }
 }
 
@@ -635,9 +642,9 @@ class SbiRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ":sbi_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: ":sbi_logo_icon:",
+    };
   }
 }
 
@@ -654,9 +661,9 @@ class TakarakujiRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ":takarakuji_logo_icon:"
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: ":takarakuji_logo_icon:",
+    };
   }
 }
 
@@ -673,9 +680,9 @@ class DevtoRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TECH_CHANNEL'),
-      icon_emoji: ":devto_logo_icon:"
-    }
+      channel: getProperty("SLACK_TECH_CHANNEL"),
+      icon_emoji: ":devto_logo_icon:",
+    };
   }
 }
 
@@ -692,9 +699,9 @@ class DocomoCycleRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_MOBILITY_CHANNEL'),
-      icon_emoji: ":docomo_cycle_logo_icon:"
-    }
+      channel: getProperty("SLACK_MOBILITY_CHANNEL"),
+      icon_emoji: ":docomo_cycle_logo_icon:",
+    };
   }
 }
 
@@ -711,9 +718,9 @@ class HelloCyclingRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_MOBILITY_CHANNEL'),
-      icon_emoji: ":hello_cycling_logo_icon:"
-    }
+      channel: getProperty("SLACK_MOBILITY_CHANNEL"),
+      icon_emoji: ":hello_cycling_logo_icon:",
+    };
   }
 }
 
@@ -730,9 +737,9 @@ class CloudflareRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TECH_CHANNEL'),
-      icon_emoji: ":cloudflare_logo_icon:"
-    }
+      channel: getProperty("SLACK_TECH_CHANNEL"),
+      icon_emoji: ":cloudflare_logo_icon:",
+    };
   }
 }
 
@@ -749,9 +756,9 @@ class CredlyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TECH_CHANNEL'),
-      icon_emoji: ":credly_logo_icon:"
-    }
+      channel: getProperty("SLACK_TECH_CHANNEL"),
+      icon_emoji: ":credly_logo_icon:",
+    };
   }
 }
 
@@ -768,9 +775,9 @@ class UdemyRule extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_TECH_CHANNEL'),
-      icon_emoji: ":udemy_logo_icon:"
-    }
+      channel: getProperty("SLACK_TECH_CHANNEL"),
+      icon_emoji: ":udemy_logo_icon:",
+    };
   }
 }
 
@@ -781,16 +788,16 @@ class Aws extends Rule {
   }
 
   canSend(): boolean {
-    const subject = this.gmailMessage.getSubject()
+    const subject = this.gmailMessage.getSubject();
 
-    return ["月次コスト"].some(pattern => subject.includes(pattern));
+    return ["月次コスト"].some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty('SLACK_FINANCE_CHANNEL'),
-      icon_emoji: ""
-    }
+      channel: getProperty("SLACK_FINANCE_CHANNEL"),
+      icon_emoji: "",
+    };
   }
 }

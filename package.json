@@ -4,9 +4,12 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "lint": "biome check src",
+    "lint-fix": "biome check --write src"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "esbuild-gas-plugin": "^0.5.0"
   }
 }
