@@ -731,7 +731,9 @@ class CloudflareRule extends Rule {
   }
 
   canSend(): boolean {
-    return false;
+    const subject = this.gmailMessage.getSubject();
+
+    return ["Cloudflare の請求書利用可"].some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {

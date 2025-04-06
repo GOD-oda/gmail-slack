@@ -1,5 +1,5 @@
 .PHONY: deploy
 deploy:
-	npm install
-	npm run build
+	pnpm install
+	pnpm build
 	clasp push
