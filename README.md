@@ -37,3 +37,6 @@ $ npm run build
 $ clasp push
 ```
 
+## URL
+
+https://script.google.com/
