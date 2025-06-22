@@ -6,6 +6,7 @@ import { Paypay } from "./rules/Paypay";
 import { RakutenCard } from "./rules/RakutenCard";
 import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
+import { TokyoSuido } from "./rules/TokyoSuido";
 import { Vpass } from "./rules/Vpass";
 
 export interface SlackConfig {
@@ -58,6 +59,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     // new CredlyRule(gmailMessage),
     // new UdemyRule(gmailMessage),
     new Aws(gmailMessage),
+    new TokyoSuido(gmailMessage),
   ];
 
   for (const rule of rules) {
