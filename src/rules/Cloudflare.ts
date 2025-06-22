@@ -1,4 +1,4 @@
-import { getProperty } from "../GetGasProperty";
+import { getGasProperty } from "../GetGasProperty";
 import type { SlackConfig } from "../GetSlackConfig";
 import { type GmailMessage, Rule } from "./Rule";
 
@@ -19,7 +19,7 @@ export class Cloudflare extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty("SLACK_TECH_CHANNEL"),
+      channel: getGasProperty("SLACK_TECH_CHANNEL"),
       icon_emoji: ":cloudflare_logo_icon:",
     };
   }

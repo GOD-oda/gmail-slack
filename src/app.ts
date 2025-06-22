@@ -1,3 +1,4 @@
+import { getGasProperty } from "./GetGasProperty";
 import { getConfig } from "./GetSlackConfig";
 
 export function main(): void {
@@ -64,7 +65,7 @@ const sendToSlack = (message: any): void => {
 
   const headers = {
     "Content-type": "application/json",
-    Authorization: `Bearer ${PropertiesService.getScriptProperties().getProperty("OAUTH_TOKEN")}`,
+    Authorization: `Bearer ${getGasProperty("OAUTH_TOKEN")}`,
   };
   const payload = createPayload(message, config);
   const options = {

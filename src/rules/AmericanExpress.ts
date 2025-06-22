@@ -1,4 +1,4 @@
-import { getProperty } from "../GetGasProperty";
+import { getGasProperty } from "../GetGasProperty";
 import type { SlackConfig } from "../GetSlackConfig";
 import { type GmailMessage, Rule } from "./Rule";
 
@@ -22,7 +22,7 @@ export class AmericanExpress extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getProperty("SLACK_PAYMENT_CHANNEL"),
+      channel: getGasProperty("SLACK_PAYMENT_CHANNEL"),
       icon_emoji: "amex_logo_icon",
     };
   }
