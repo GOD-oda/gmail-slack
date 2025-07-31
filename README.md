@@ -4,8 +4,7 @@
 required
 
 - clasp 
-- npm >= 8.5.5
-- node >= 20.2.0
+- node >= 23.11.0
 
 ```shell
 $ npm i @google/clasp -g
