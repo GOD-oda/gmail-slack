@@ -11,7 +11,7 @@ export class Cloudflare extends Rule {
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject();
 
-    return ["Cloudflare の請求書利用可"].some((pattern) =>
+    return ["Cloudflare の購入確認"].some((pattern) =>
       subject.includes(pattern),
     );
   }
@@ -19,7 +19,7 @@ export class Cloudflare extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getGasProperty("SLACK_TECH_CHANNEL"),
+      channel: getGasProperty("SLACK_PAYMENT_CHANNEL"),
       icon_emoji: ":cloudflare_logo_icon:",
     };
   }

@@ -13,7 +13,7 @@ export function main(): void {
         return;
       }
 
-      sendToSlack(message);
+      sendMessageToSlack(message);
     }
   }
 }
@@ -51,7 +51,7 @@ const createPayload = (message: any, config: any) => {
 
 // @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
 // biome-ignore lint/suspicious/noExplicitAny:
-const sendToSlack = (message: any): void => {
+const sendMessageToSlack = (message: any): void => {
   const config = getConfig(message);
   if (debugMode()) {
     console.log({
@@ -63,11 +63,34 @@ const sendToSlack = (message: any): void => {
     return;
   }
 
+  const payload = createPayload(message, config);
+
+  if (debugMode()) {
+    console.log({
+      from: message.getFrom(),
+      payload: payload,
+    });
+  }
+  const response = sendToSlack(payload);
+  const responseBody = JSON.parse(response.getContentText());
+
+  if (debugMode()) {
+    console.log(responseBody);
+  }
+
+  if (!responseBody.ok) {
+    const errorPayload = createErrorPayload(responseBody, payload);
+    sendToSlack(errorPayload);
+  } else {
+    message.markRead();
+  }
+};
+
+const sendToSlack = (payload: any): any => {
   const headers = {
     "Content-type": "application/json",
     Authorization: `Bearer ${getGasProperty("OAUTH_TOKEN")}`,
   };
-  const payload = createPayload(message, config);
   const options = {
     method: "post",
     headers: headers,
@@ -77,18 +100,25 @@ const sendToSlack = (message: any): void => {
 
   if (debugMode()) {
     console.log({
-      from: message.getFrom(),
       headers: headers,
       payload: payload,
     });
   }
-  const response = UrlFetchApp.fetch(
+
+  return UrlFetchApp.fetch(
     "https://slack.com/api/chat.postMessage",
     options,
   );
-  if (debugMode()) {
-    console.log(JSON.parse(response.getContentText()));
-  }
+}
 
-  message.markRead();
+
+const createErrorPayload = (errorResponse: any, originalPayload: any): any => {
+  const errorChannel = getGasProperty("SLACK_ERROR_CHANNEL");
+  return {
+    channel: errorChannel,
+    username: "Slack Error Notifier",
+    text: `Slackへのメッセージ送信に失敗しました。\nエラー内容: ${errorResponse.error}\nオリジナルペイロード: ${JSON.stringify(originalPayload)}`,
+    // icon_emoji: ":warning:",
+  };
 };
+

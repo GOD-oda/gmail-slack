@@ -17,7 +17,7 @@ export class Aws extends Rule {
   config(): SlackConfig {
     return {
       address: "",
-      channel: getGasProperty("SLACK_FINANCE_CHANNEL"),
+      channel: getGasProperty("SLACK_PAYMENT_CHANNEL"),
       icon_emoji: "",
     };
   }
