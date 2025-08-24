@@ -10,9 +10,7 @@ export class Mufgcard extends Rule {
 
   canSend(): boolean {
     const subject = this.gmailMessage.getSubject();
-    const targets = [
-      "ご請求額確定のお知らせ",
-    ];
+    const targets = ["ご請求額確定のお知らせ"];
 
     return targets.some((pattern) => subject.includes(pattern));
   }

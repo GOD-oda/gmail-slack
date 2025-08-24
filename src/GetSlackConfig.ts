@@ -2,13 +2,13 @@ import { AmericanExpress } from "./rules/AmericanExpress";
 import { Aws } from "./rules/Aws";
 import { Cloudflare } from "./rules/Cloudflare";
 import { Mufg } from "./rules/Mufg";
+import { Mufgcard } from "./rules/Mufgcard";
 import { Paypay } from "./rules/Paypay";
 import { RakutenCard } from "./rules/RakutenCard";
 import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
 import { TokyoSuido } from "./rules/TokyoSuido";
 import { Vpass } from "./rules/Vpass";
-import {Mufgcard} from "./rules/Mufgcard";
 
 export interface SlackConfig {
   address: string;

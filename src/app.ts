@@ -105,12 +105,8 @@ const sendToSlack = (payload: any): any => {
     });
   }
 
-  return UrlFetchApp.fetch(
-    "https://slack.com/api/chat.postMessage",
-    options,
-  );
-}
-
+  return UrlFetchApp.fetch("https://slack.com/api/chat.postMessage", options);
+};
 
 const createErrorPayload = (errorResponse: any, originalPayload: any): any => {
   const errorChannel = getGasProperty("SLACK_ERROR_CHANNEL");
@@ -121,4 +117,3 @@ const createErrorPayload = (errorResponse: any, originalPayload: any): any => {
     // icon_emoji: ":warning:",
   };
 };
-
