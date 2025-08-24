@@ -18,7 +18,6 @@ export abstract class Rule {
   }
 }
 
-// TODO: Ruleクラスの処理にした方が良さそう
 const matchEmail = (email: string, domain: string): boolean => {
   const emailConfig: EmailConfig = splitEmail(email);
   return emailConfig.domain.includes(domain);
