@@ -4,6 +4,7 @@ import { Cloudflare } from "./rules/Cloudflare";
 import { Mufg } from "./rules/Mufg";
 import { Mufgcard } from "./rules/Mufgcard";
 import { Paypay } from "./rules/Paypay";
+import { Qenest } from "./rules/Qenest";
 import { RakutenCard } from "./rules/RakutenCard";
 import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
@@ -28,6 +29,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new Aws(gmailMessage),
     new TokyoSuido(gmailMessage),
     new Mufgcard(gmailMessage),
+    new Qenest(gmailMessage),
   ];
 
   for (const rule of rules) {
