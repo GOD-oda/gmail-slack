@@ -10,6 +10,7 @@ import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
 import { TokyoSuido } from "./rules/TokyoSuido";
 import { Vpass } from "./rules/Vpass";
+import {Nihontsushin} from "./rules/Nihontsushin";
 
 export interface SlackConfig {
   address: string;
@@ -30,6 +31,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new TokyoSuido(gmailMessage),
     new Mufgcard(gmailMessage),
     new Qenest(gmailMessage),
+    new Nihontsushin(gmailMessage),
   ];
 
   for (const rule of rules) {
