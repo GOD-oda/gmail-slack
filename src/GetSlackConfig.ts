@@ -1,8 +1,11 @@
 import { AmericanExpress } from "./rules/AmericanExpress";
+import { AppStore } from "./rules/AppStore";
 import { Aws } from "./rules/Aws";
 import { Cloudflare } from "./rules/Cloudflare";
+import { GooglePayments } from "./rules/GooglePayments";
 import { Mufg } from "./rules/Mufg";
 import { Mufgcard } from "./rules/Mufgcard";
+import { Nihontsushin } from "./rules/Nihontsushin";
 import { Paypay } from "./rules/Paypay";
 import { Qenest } from "./rules/Qenest";
 import { RakutenCard } from "./rules/RakutenCard";
@@ -10,8 +13,6 @@ import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
 import { TokyoSuido } from "./rules/TokyoSuido";
 import { Vpass } from "./rules/Vpass";
-import {Nihontsushin} from "./rules/Nihontsushin";
-import {AppStore} from "./rules/AppStore";
 
 export interface SlackConfig {
   address: string;
@@ -34,6 +35,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new Qenest(gmailMessage),
     new Nihontsushin(gmailMessage),
     new AppStore(gmailMessage),
+    new GooglePayments(gmailMessage),
   ];
 
   for (const rule of rules) {
