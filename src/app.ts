@@ -10,7 +10,7 @@ export function main(): void {
     // @see https://developers.google.com/apps-script/reference/gmail/gmail-thread?hl=ja#getmessages
     for (const message of thread.getMessages()) {
       if (!message.isUnread()) {
-        return;
+        continue;
       }
 
       sendMessageToSlack(message);
