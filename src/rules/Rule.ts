@@ -4,6 +4,7 @@ import { type EmailConfig, splitEmail } from "../SplitEmail";
 export abstract class Rule {
   // TODO: 各クラスでデフォルトセットした方が良さそう？
   domain = "";
+  domains: string[] = [];
   list: SlackConfig[] = [];
   gmailMessage: GmailMessage;
 
@@ -14,7 +15,11 @@ export abstract class Rule {
   abstract canSend(): boolean;
   abstract config(): SlackConfig;
   match(): boolean {
-    return matchEmail(this.gmailMessage.getFrom(), this.domain);
+    const domains = this.domains.length > 0 ? this.domains : [this.domain];
+
+    return domains.some((domain) =>
+      matchEmail(this.gmailMessage.getFrom(), domain),
+    );
   }
 }
 
