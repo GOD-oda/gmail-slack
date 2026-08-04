@@ -6,6 +6,7 @@ import { GooglePayments } from "./rules/GooglePayments";
 import { Mufg } from "./rules/Mufg";
 import { Mufgcard } from "./rules/Mufgcard";
 import { Nihontsushin } from "./rules/Nihontsushin";
+import { Paidy } from "./rules/Paidy";
 import { Paypay } from "./rules/Paypay";
 import { Qenest } from "./rules/Qenest";
 import { RakutenCard } from "./rules/RakutenCard";
@@ -36,6 +37,7 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new Nihontsushin(gmailMessage),
     new AppStore(gmailMessage),
     new GooglePayments(gmailMessage),
+    new Paidy(gmailMessage),
   ];
 
   for (const rule of rules) {
