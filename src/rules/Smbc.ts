@@ -6,14 +6,7 @@ export class Smbc extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "dn.smbc.co.jp";
-  }
-
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject();
-
-    return ["口座引き落としの事前お知らせ"].some((pattern) =>
-      subject.includes(pattern),
-    );
+    this.subjects = ["口座引き落としの事前お知らせ"];
   }
 
   config(): SlackConfig {

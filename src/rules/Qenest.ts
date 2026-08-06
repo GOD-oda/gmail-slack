@@ -6,14 +6,7 @@ export class Qenest extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "esp-smart.com";
-  }
-
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject();
-
-    return ["今月のご請求のお知らせ"].some((pattern) =>
-      subject.includes(pattern),
-    );
+    this.subjects = ["今月のご請求のお知らせ"];
   }
 
   config(): SlackConfig {

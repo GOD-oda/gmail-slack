@@ -5,6 +5,7 @@ export abstract class Rule {
   // TODO: 各クラスでデフォルトセットした方が良さそう？
   domain = "";
   domains: string[] = [];
+  subjects: string[] = [];
   list: SlackConfig[] = [];
   gmailMessage: GmailMessage;
 
@@ -12,8 +13,33 @@ export abstract class Rule {
     this.gmailMessage = gmailMessage;
   }
 
-  abstract canSend(): boolean;
   abstract config(): SlackConfig;
+  canSend(): boolean {
+    const subject = this.gmailMessage.getSubject().toLowerCase();
+
+    return this.subjects.some((pattern) =>
+      subject.includes(pattern.toLowerCase()),
+    );
+  }
+  gmailSearchClause(): string {
+    const senderTerms = this.gmailSearchSenders().map(
+      (sender) => `from:${sender}`,
+    );
+    const senderQuery = groupTerms(senderTerms);
+
+    if (this.subjects.length === 0) {
+      return senderQuery;
+    }
+
+    const subjectTerms = this.subjects.map(
+      (subject) => `subject:"${escapeSearchPhrase(subject)}"`,
+    );
+
+    return `(${senderQuery} ${groupTerms(subjectTerms)})`;
+  }
+  gmailSearchSenders(): string[] {
+    return this.domains.length > 0 ? this.domains : [this.domain];
+  }
   match(): boolean {
     const domains = this.domains.length > 0 ? this.domains : [this.domain];
 
@@ -22,6 +48,14 @@ export abstract class Rule {
     );
   }
 }
+
+const groupTerms = (terms: string[]): string => {
+  return terms.length === 1 ? terms[0] : `{${terms.join(" ")}}`;
+};
+
+const escapeSearchPhrase = (phrase: string): string => {
+  return phrase.replace(/[\\"]/g, "\\$&");
+};
 
 const matchEmail = (email: string, domain: string): boolean => {
   const emailConfig: EmailConfig = splitEmail(email);

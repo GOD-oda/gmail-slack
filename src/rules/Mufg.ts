@@ -6,15 +6,9 @@ export class Mufg extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "mufg.jp";
-  }
-
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject();
-    const targets = [
+    this.subjects = [
       "（三菱ＵＦＪ銀行）口座振替処理（お引き落とし）未済のお知らせ",
     ];
-
-    return targets.some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {

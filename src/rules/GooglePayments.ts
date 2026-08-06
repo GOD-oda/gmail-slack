@@ -6,6 +6,7 @@ export class GooglePayments extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "google.com";
+    this.subjects = ["請求書の用意"];
   }
 
   // google.com は他サービスのメールも多いため、送信元アドレス全体で絞る
@@ -13,11 +14,8 @@ export class GooglePayments extends Rule {
     return this.gmailMessage.getFrom().includes("payments-noreply@google.com");
   }
 
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject();
-    const targets = ["請求書の用意"];
-
-    return targets.some((pattern) => subject.includes(pattern));
+  gmailSearchSenders(): string[] {
+    return ["payments-noreply@google.com"];
   }
 
   config(): SlackConfig {

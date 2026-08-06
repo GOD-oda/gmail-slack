@@ -21,8 +21,8 @@ export interface SlackConfig {
   channel: string;
 }
 
-export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
-  const rules: Rule[] = [
+const createRules = (gmailMessage: GmailMessage): Rule[] => {
+  return [
     new RakutenCard(gmailMessage),
     new AmericanExpress(gmailMessage),
     new Vpass(gmailMessage),
@@ -39,6 +39,22 @@ export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
     new GooglePayments(gmailMessage),
     new Paidy(gmailMessage),
   ];
+};
+
+export const getGmailSearchQuery = (): string => {
+  const emptyMessage: GmailMessage = {
+    getFrom: () => "",
+    getSubject: () => "",
+  };
+  const ruleQueries = createRules(emptyMessage).map((rule) =>
+    rule.gmailSearchClause(),
+  );
+
+  return `in:inbox is:unread newer_than:30d {${ruleQueries.join(" ")}}`;
+};
+
+export const getConfig = (gmailMessage: GmailMessage): SlackConfig | null => {
+  const rules = createRules(gmailMessage);
 
   for (const rule of rules) {
     rule.gmailMessage = gmailMessage;

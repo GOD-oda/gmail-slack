@@ -6,14 +6,7 @@ export class Aws extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domains = ["amazonaws.com", "aws.com"];
-  }
-
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject().toLowerCase();
-
-    return ["月次コスト", "billing"].some((pattern) =>
-      subject.includes(pattern),
-    );
+    this.subjects = ["月次コスト", "billing"];
   }
 
   config(): SlackConfig {

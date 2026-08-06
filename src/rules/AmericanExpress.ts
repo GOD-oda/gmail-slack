@@ -6,17 +6,11 @@ export class AmericanExpress extends Rule {
   constructor(gmailMessage: GmailMessage) {
     super(gmailMessage);
     this.domain = "americanexpress";
-  }
-
-  canSend(): boolean {
-    const subject = this.gmailMessage.getSubject();
-    const targets = [
+    this.subjects = [
       "次回口座振替のお知らせ",
       "カードご利用金額のお知らせ",
       "ご請求金額確定のご案内",
     ];
-
-    return targets.some((pattern) => subject.includes(pattern));
   }
 
   config(): SlackConfig {
