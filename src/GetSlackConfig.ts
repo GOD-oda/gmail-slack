@@ -13,6 +13,7 @@ import { RakutenCard } from "./rules/RakutenCard";
 import type { GmailMessage, Rule } from "./rules/Rule";
 import { Smbc } from "./rules/Smbc";
 import { TokyoSuido } from "./rules/TokyoSuido";
+import { UpT } from "./rules/UpT";
 import { Vpass } from "./rules/Vpass";
 
 export interface SlackConfig {
@@ -38,6 +39,7 @@ const createRules = (gmailMessage: GmailMessage): Rule[] => {
     new AppStore(gmailMessage),
     new GooglePayments(gmailMessage),
     new Paidy(gmailMessage),
+    new UpT(gmailMessage),
   ];
 };
 
