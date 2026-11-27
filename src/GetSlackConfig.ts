@@ -1,6 +1,7 @@
 import { AmericanExpress } from "./rules/AmericanExpress";
 import { AppStore } from "./rules/AppStore";
 import { Aws } from "./rules/Aws";
+import { Base } from "./rules/Base";
 import { Cloudflare } from "./rules/Cloudflare";
 import { GooglePayments } from "./rules/GooglePayments";
 import { Mufg } from "./rules/Mufg";
@@ -40,12 +41,14 @@ const createRules = (gmailMessage: GmailMessage): Rule[] => {
     new GooglePayments(gmailMessage),
     new Paidy(gmailMessage),
     new UpT(gmailMessage),
+    new Base(gmailMessage),
   ];
 };
 
 export const getGmailSearchQuery = (): string => {
   const emptyMessage: GmailMessage = {
     getFrom: () => "",
+    getTo: () => "",
     getSubject: () => "",
   };
   const ruleQueries = createRules(emptyMessage).map((rule) =>

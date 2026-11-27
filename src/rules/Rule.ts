@@ -65,5 +65,6 @@ const matchEmail = (email: string, domain: string): boolean => {
 // @see https://developers.google.com/apps-script/reference/gmail/gmail-message?hl=ja
 export interface GmailMessage {
   getFrom: () => string;
+  getTo: () => string;
   getSubject: () => string;
 }
